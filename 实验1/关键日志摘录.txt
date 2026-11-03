@@ -1,0 +1,3 @@
+VBox.log.1:895: 00:00:18.348824 NEM: NEMR3Init: Snail execution mode is active!
+VBox.log.1:2227: 00:11:32.927864 VMMDev: vmmDevHeartbeatFlatlinedTimer: Guest seems to be unresponsive. Last heartbeat received 4 seconds ago
+VBox.log.2:853: 00:00:18.273142 NEM: NEMR3Init: Snail execution mode is active!
