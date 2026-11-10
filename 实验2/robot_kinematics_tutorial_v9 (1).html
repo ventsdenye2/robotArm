@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>坐标转换、齐次变换矩阵与机械臂正逆运动学｜交互式教程 V9</title>
+<meta name="description" content="从坐标系与方向余弦出发，先推导二维和三维旋转矩阵，再推导齐次变换矩阵，结合滑动条理解坐标转换、机械臂正向与逆向运动学。无需联网。">
+<style>
+:root{--bg:#f6f8fc;--white:#fff;--ink:#1b2e47;--sub:#52667f;--mute:#77899e;--line:#e1e8f1;--navy:#145396;--blue:#2872c7;--green:#168b77;--orange:#d88425;--purple:#8557c1;--red:#cf4b54;--softblue:#eff6ff;--shadow:0 6px 22px rgba(33,70,113,.045)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Microsoft YaHei","PingFang SC","Noto Sans CJK SC",system-ui,sans-serif;font-size:15px;line-height:1.85}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid #6ca8ed;outline-offset:3px}a{color:var(--navy)}.hero{background:linear-gradient(115deg,#ebf3fe 0%,#f9fcff 65%,#fff 100%);border-bottom:1px solid #dbe6f3;padding:42px max(24px,calc((100vw - 1350px)/2)) 37px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:2px;color:var(--navy)}.hero h1{font-size:clamp(26px,3.15vw,41px);line-height:1.35;margin:9px 0 11px;letter-spacing:-.3px}.hero p{color:var(--sub);font-size:16px;max-width:850px;margin:0}.tags{display:flex;gap:9px;flex-wrap:wrap;margin-top:19px}.tag{font-size:12px;font-weight:700;color:#3c668f;background:#fff;border:1px solid #dae6f4;border-radius:999px;padding:5px 12px}.page{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:218px minmax(0,1fr);gap:28px;padding:27px 26px 65px;align-items:start}.toc{position:sticky;top:17px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 10px;box-shadow:var(--shadow);max-height:calc(100vh - 32px);overflow:auto}.toc strong{display:block;margin:0 9px 9px;font-size:13px;letter-spacing:1px;color:var(--mute)}.toc a{display:block;text-decoration:none;color:#536b85;padding:9px 10px;border-radius:8px;font-size:13px;line-height:1.45}.toc a:hover,.toc a.active{background:#eaf3ff;color:var(--navy);font-weight:700}.toc .tip{background:#f4f7fb;border-radius:9px;padding:10px;margin:14px 5px 1px;font-size:11px;line-height:1.7;color:#7a8b9e}.content{min-width:0}.chapter{scroll-margin-top:20px;margin:0 0 22px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:27px clamp(16px,2.6vw,32px) 30px;box-shadow:var(--shadow)}.num{font-size:12px;letter-spacing:1.7px;font-weight:800;color:var(--navy);margin-bottom:4px}.chapter h2{font-size:clamp(22px,2.2vw,28px);line-height:1.45;margin:0 0 15px;color:#173e6e}.chapter h3{font-size:19px;color:#285b91;margin:21px 0 10px;line-height:1.55}.chapter p{margin:10px 0;line-height:1.95;color:#374e69}.lead{font-size:16px}.muted{color:var(--sub)}.callout{background:var(--softblue);border-left:4px solid var(--blue);border-radius:0 10px 10px 0;padding:13px 17px;margin:15px 0;color:#244e77}.callout strong{color:#124c86}.callout.ink{background:#f6f8fb;border-color:#95a7bd}.callout.orange{background:#fff8f0;border-color:var(--orange)}.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:15px 0}.triple{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin:14px 0}.tile{background:#f8fafc;border:1px solid #e5ecf4;border-radius:12px;padding:14px 16px;min-width:0}.tile strong{display:block;color:#214f80;margin-bottom:3px}.tile p{font-size:14px;margin:4px 0}.stepper{display:flex;align-items:stretch;gap:7px;margin:18px 0;flex-wrap:wrap}.stepper .chip{flex:1;min-width:130px;text-align:center;border:1px solid #d9e5f3;border-radius:10px;padding:12px 10px;background:#f8fbff;color:#36628e;font-weight:700}.stepper .sep{align-self:center;color:#a1b1c1;font-size:23px}.math{background:#f4f8fe;border:1px solid #dbe8f8;border-radius:11px;padding:14px 16px;text-align:center;overflow-x:auto;white-space:nowrap;font-family:Cambria,"Times New Roman",serif;font-size:clamp(16px,1.7vw,21px);color:#153f6c;margin:15px 0;line-height:1.9}.math b{font-weight:750}.math-sm{font-size:17px}.mathblock{display:inline-flex;gap:11px;align-items:center;white-space:nowrap}.matrix{display:inline-grid;grid-auto-rows:minmax(29px,auto);gap:3px 5px;vertical-align:middle;border-left:2px solid #405b7b;border-right:2px solid #405b7b;padding:5px 9px;background:#fff;border-radius:2px;text-align:center;font-family:Cambria,"Times New Roman",serif;font-size:17px;line-height:1.2}.matrix.m4{grid-template-columns:repeat(4,minmax(33px,auto))}.matrix.m3{grid-template-columns:repeat(3,minmax(33px,auto))}.matrix span{display:flex;align-items:center;justify-content:center;min-width:32px;padding:5px 6px;border-radius:4px}.matrix .cb{background:#eaf3ff;color:#2369b8}.matrix .cg{background:#e8f7f2;color:#087c65}.matrix .co{background:#fff2e2;color:#b56615}.matrix .cp{background:#f2ebfc;color:#8455b5}.matrix .gray{background:#f5f7f9;color:#77889b}.matrix .focus{box-shadow:inset 0 0 0 2px #ca4d5d}.formula{font:500 16px/1.9 Cambria,"Times New Roman",sans-serif;background:#f6f9fd;border-left:3px solid #83acda;padding:10px 14px;margin:10px 0;border-radius:0 8px 8px 0;overflow-x:auto}.explain{color:#52677f;font-size:13px}.interactive{display:grid;grid-template-columns:minmax(0,1.36fr) minmax(310px,.9fr);gap:14px;margin:20px 0 12px;align-items:start}.board{border:1px solid #e1e9f3;border-radius:13px;padding:13px 12px 9px;background:#fbfdff;min-width:0}.board svg{display:block;width:100%;height:auto;max-height:500px}.boardtitle{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:5px;font-weight:750;color:#315071;font-size:14px}.boardtitle small{font-size:11px;font-weight:500;color:#8495a8}.controlbox{border:1px solid #e1e9f3;border-radius:13px;padding:16px 18px;background:#fff;min-width:0}.controlbox h4{margin:0 0 12px;font-size:15px;color:#285785}.slider-item{margin:11px 0 15px}.slider-label{display:flex;gap:10px;justify-content:space-between;align-items:center;font-size:13px;font-weight:700}.value{font-variant-numeric:tabular-nums;background:#edf5fd;color:var(--navy);border-radius:7px;padding:3px 8px;min-width:53px;text-align:right}input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer;margin:13px 0 0;height:8px}.buttons{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 3px}.btn{background:#fff;color:var(--navy);border:1px solid #bcd2e9;border-radius:8px;padding:8px 13px;font-size:12px;font-weight:800}.btn.selected,.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}.btn:hover{filter:brightness(.96)}.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.metric{background:#f3f7fc;border:1px solid #e4edf7;padding:10px;border-radius:9px;min-width:0}.metric small{font-size:11px;color:#698098;display:block}.metric strong{font-size:20px;color:#193f69;font-variant-numeric:tabular-nums;white-space:nowrap}.metric.green strong{color:#16866d}.tiny{font-size:12px;color:#7b8ea2}.result{background:#eef5fd;border:1px solid #dce9f7;color:#254e7b;border-radius:10px;padding:12px 14px;line-height:1.9;margin-top:10px}.result .row{display:block}.result b{color:#0d4c87}.table-scroll{width:100%;overflow-x:auto;margin:14px 0}.data-table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;min-width:620px}.data-table th{background:#eaf2fb;color:#345b83;text-align:left;padding:10px 11px}.data-table td{border-bottom:1px solid #e9eff6;padding:9px 11px;vertical-align:top}.data-table tbody tr:nth-child(2n){background:#fbfcfe}.data-table .mono{font-family:Cambria,serif;font-size:16px;white-space:nowrap;font-weight:700}.data-table .valcell{font-variant-numeric:tabular-nums;font-weight:800;color:#145396;white-space:nowrap}.timeline{display:flex;flex-direction:column;gap:9px;margin:15px 0}.trow{display:grid;grid-template-columns:34px 1fr;align-items:start;gap:11px}.bubble{background:#e6f1ff;color:#225e9f;border-radius:9px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-weight:800}.trow p{margin:2px 0}.compact{font-size:13px;color:#637a92}.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:#6c7e91;padding:7px 4px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.code{font-family:ui-monospace,Consolas,monospace}.note{font-size:13px;color:#58718c}.micro{font-size:13px;color:#4d6581}.hr{border-top:1px solid #e8edf4;margin:20px 0}.quiz details{border:1px solid #e1e8f1;border-radius:10px;padding:10px 14px;margin:9px 0;background:#fcfdff}.quiz summary{cursor:pointer;font-weight:750;color:#294e78}.quiz details p{font-size:13px}.footer{text-align:center;font-size:12px;color:#9aa8b9;margin:20px 0}.caption{font-size:12px;color:#8293a7;margin:5px 0}.green-text{color:#13816b}.blue-text{color:#216aba}.purple-text{color:#8454ae}.orange-text{color:#bc721c}.red-text{color:#b74950} .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* V7: matrix-aligned direction cosine table */
+.cos-grid{min-width:790px;table-layout:fixed}
+.cos-grid th{text-align:center}
+.cos-grid .axishead{min-width:118px;background:#e8f0f9;font-weight:800}
+.cos-grid td{text-align:center;min-width:195px;padding:11px 9px!important}
+.cos-grid .elem{font:700 17px Cambria,"Times New Roman",serif;color:#1d568d}
+.cos-grid .pair{display:block;font-size:11px;color:#647a92;margin:1px 0 4px}
+.cos-grid .actual{font-size:12px;color:#506986}
+.cos-grid .actual strong{color:#144f91;font-size:15px}
+.cos-grid td:nth-child(2){background:rgba(40,114,199,.035)}
+.cos-grid td:nth-child(3){background:rgba(22,139,119,.035)}
+.cos-grid td:nth-child(4){background:rgba(216,132,37,.035)}
+.matrix-guide{display:flex;gap:9px;flex-wrap:wrap;margin:7px 0 12px}
+.matrix-guide .mini{padding:7px 11px;border:1px solid #dce8f5;border-radius:8px;background:#f7faff;font-size:12px;color:#355e88}
+.coordinate-sum td:first-child{font-weight:800;color:#225d98}
+.coordinate-sum td:nth-child(3){color:#7853aa;font-weight:700}
+
+@media(max-width:1080px){.page{grid-template-columns:1fr;padding:18px 18px 50px}.toc{position:static;max-height:none;display:flex;flex-wrap:wrap;gap:4px}.toc strong{width:100%}.toc a{display:inline-block;padding:7px 9px}.toc .tip{display:none}.interactive{grid-template-columns:minmax(0,1fr) minmax(300px,.8fr)}}
+@media(max-width:760px){.hero{padding:30px 18px}.hero p{font-size:14px}.page{padding:13px 12px 38px}.chapter{padding:21px 16px 24px}.interactive,.cols,.triple{grid-template-columns:1fr}.stepper .sep{display:none}.stepper .chip{min-width:130px}.math{font-size:16px;padding:10px 8px}.matrix{font-size:14px;gap:2px}.matrix span{padding:5px 3px;min-width:25px}.matrix.m4{grid-template-columns:repeat(4,minmax(26px,auto))}.controlbox{padding:15px}.metric strong{font-size:18px}.board{padding:8px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{.page{display:block}.toc,.buttons{display:none}.chapter{break-inside:avoid}.hero{padding:20px}.interactive{break-inside:avoid}}
+
+/* Direction-cosine teaching elements */
+.angle-pill{display:inline-block;background:#eef5fd;padding:1px 7px;border-radius:6px;color:#145396;font-weight:700}.valcell{font-variant-numeric:tabular-nums}.axis-note{border-left:3px solid #a8c1e1;padding-left:10px;color:#536b85;font-size:13px}
+.matrix.wide-angle{font-size:11px;grid-auto-rows:minmax(42px,auto);gap:2px}.matrix.wide-angle span{min-width:0;white-space:nowrap;padding:7px 4px}
+@media(max-width:760px){.matrix.wide-angle{font-size:9px;padding:4px 3px}.matrix.wide-angle span{padding:4px 2px}}
+/* V8: six-revolute-joint teaching demos */
+.six-table{min-width:760px}.six-table td:first-child{color:#145396;font-size:15px}
+.six-interactive{grid-template-columns:minmax(0,1.28fr) minmax(300px,.92fr)}
+.six-interactive .board svg{max-height:520px}
+.six-interactive .slider-item{margin:9px 0 12px}
+.six-interactive input[type=range]{margin-top:8px}
+.three-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
+.three-metrics .metric strong{font-size:18px}
+.kin-select{padding:7px 10px;border-radius:8px;border:1px solid #cbddeb;background:#fff;color:#285785;max-width:58%;font-size:13px}
+.ik-angles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:11px;font-variant-numeric:tabular-nums}
+.ik-angles .ang{padding:7px 5px;background:#eaf3ff;color:#225989;border-radius:8px;text-align:center;font-weight:750}
+.ik-angles .ang span{display:block;font-size:11px;color:#58718c}
+.view-slider{padding:0 9px}
+@media(max-width:760px){.six-interactive{grid-template-columns:1fr}.three-metrics .metric strong{font-size:16px}.ik-angles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* V9: 从列到行 - 一套完整的三维数值推导 */
+.axis-principle{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+.axis-principle .tile{background:#f6faff;border-color:#dae7f6}
+.axis-principle .tile:nth-child(2){background:#f4faf8;border-color:#d9eee9}
+.axis-principle strong{font-size:16px}
+.axis-principle .short-line{font-size:14px;font-weight:700;color:#274d71}
+.v9-lab{border:1px solid #d7e5f5;border-radius:14px;background:#fbfdff;padding:18px;margin:20px 0}
+.v9-lab h4{margin:0;color:#194f83;font-size:17px}
+.v9-lab .v9-sub{font-size:13px;color:#617891;margin:4px 0 14px}
+.v9-workspace{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(275px,.8fr);gap:15px;align-items:start}
+.v9-panel{background:#fff;border:1px solid #dfe9f3;border-radius:12px;padding:13px 14px;min-width:0}
+.v9-panel .v9-panel-title{font-size:14px;font-weight:800;color:#305a87;margin-bottom:7px}
+.v9-panel .tiny{line-height:1.65}
+.v9-panel .slider-item{margin:8px 0 10px}
+.v9-panel input[type=range]{margin:9px 0 0}
+.v9-matrix-table{width:100%;border-collapse:separate;border-spacing:3px;font-size:13px;min-width:505px;table-layout:fixed}
+.v9-matrix-table th{font-weight:800;padding:7px 6px;background:#edf3fa;color:#355a7c;border-radius:5px;text-align:center}
+.v9-matrix-table td{padding:7px 5px;text-align:center;vertical-align:middle;border:1px solid #ebeff5;border-radius:6px;background:#fcfdff}
+.v9-matrix-table tr.is-active td{background:#e8f2ff;border-color:#92b9e8;box-shadow:inset 0 0 0 1px #b1ccef}
+.v9-matrix-table .v9-row-label{background:#f0f5fb;font-weight:800;color:#234a78;white-space:nowrap}
+.v9-matrix-table .v9-cell-label{font:700 16px Cambria,'Times New Roman',serif;display:block;line-height:1.2}
+.v9-matrix-table .v9-angle{font-size:10px;display:block;color:#69819b;margin-top:3px}
+.v9-matrix-table .v9-number{font-size:15px;font-weight:800;color:#193c64;display:block;font-variant-numeric:tabular-nums}
+.v9-matrix-table .v9-col-x{color:#2569b6}.v9-matrix-table .v9-col-y{color:#0d856e}.v9-matrix-table .v9-col-z{color:#b96c16}.v9-matrix-table .v9-col-t{color:#8656b0}
+.v9-rowbuttons{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.v9-rowbuttons button{flex:1;min-width:95px;max-width:175px}
+.v9-rowbuttons .selected{background:var(--navy);color:white;border-color:var(--navy)}
+.v9-contrib{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:13px 0}
+.v9-term{padding:11px 8px;background:#fff;border:1px solid #e0e8f2;border-top:4px solid var(--blue);border-radius:9px;text-align:center;min-width:0}
+.v9-term:nth-child(2){border-top-color:var(--green)}.v9-term:nth-child(3){border-top-color:var(--orange)}.v9-term:nth-child(4){border-top-color:var(--purple)}
+.v9-term small{font-size:11px;display:block;color:#637993}.v9-term .v9-calc{font:700 15px Cambria,'Times New Roman',serif;display:block;overflow-wrap:anywhere}
+.v9-term b{display:block;color:#1b466e;font-size:20px;font-variant-numeric:tabular-nums}
+.v9-output{background:#eaf3ff;color:#194f83;border-radius:9px;padding:12px 16px;display:flex;flex-wrap:wrap;gap:7px;justify-content:space-between;align-items:center;font-weight:700}
+.v9-output strong{font-size:21px}
+.v9-fullcoords{font-size:13px;color:#476580;margin:12px 0 0}
+.v9-pivot{display:inline-block;padding:1px 8px;background:#eaf3ff;border-radius:6px;font-weight:800;color:#195b9b}
+@media(max-width:850px){.v9-workspace{grid-template-columns:1fr}.v9-contrib{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.axis-principle{grid-template-columns:1fr}.v9-lab{padding:12px}.v9-matrix-table{min-width:505px}.v9-term{padding:8px 6px}.v9-term .v9-calc{font-size:13px}}
+</style>
+</head>
+<body>
+<header class="hero" id="top">
+<div class="eyebrow">陈玮——具身智能导论</div>
+<h1>从“坐标怎么变”到“机械臂怎么动”</h1>
+<p>先从新旧坐标轴的夹角余弦求方向，再解释如何把旋转和平移组合为齐次变换矩阵；最后通过滑动条理解三维旋转、坐标转换以及六自由度机械臂的正逆运动学。</p>
+</header>
+<div class="page">
+<nav class="toc" aria-label="章节目录">
+<strong>学习路线</strong>
+<a href="#ch1">01 · 为什么坐标会不同</a>
+<a href="#ch2">02 · 用轴间夹角的cos求方向</a>
+<a href="#ch3">03 · 从方向余弦构造旋转矩阵</a>
+<a href="#ch4">04 · 为什么需要齐次变换矩阵</a>
+<a href="#ch5">05 · 按行计算与坐标转换</a>
+<a href="#ch6">06 · 机械臂正向运动学 FK</a>
+<a href="#ch7">07 · 机械臂逆向运动学 IK</a>
+<a href="#ch8">08 · 知识串联与自测</a>
+<div class="tip">建议按顺序讲解。蓝色表示 B 的 X 轴；绿色表示 B 的 Y 轴；紫色表示平移；红色表示目标点。</div>
+</nav>
+<main class="content">
+<section class="chapter" id="ch1">
+<div class="num">01 / 从问题出发</div><h2>同一个点，为什么会有两组坐标？</h2>
+<p class="lead">一个杯子放在桌上不动，以教室门为原点测量是一组坐标，以讲台为原点测量又是另一组坐标。<strong>变的是描述方式，不是杯子的位置。</strong></p>
+<div class="cols"><div class="tile"><strong>坐标系 A：参照系</strong><p>规定 A 的原点以及 X、Y、Z 三个方向。我们希望把物体位置统一描述在 A 中。</p></div><div class="tile"><strong>坐标系 B：局部系</strong><p>B 的原点可以移动，三个轴也可以旋转。同一个点 P，在 B 中有局部坐标。</p></div></div>
+<div class="callout"><strong>我们真正要求的：</strong>已知 P 在 B 中的坐标，以及 B 相对于 A 的位置和方向，怎样计算 P 在 A 中的坐标？</div>
+<p>先不要记矩阵。只需要想象：<strong>从 A 原点到 P，应该怎么走？</strong> 可以分成“先到 B 原点，再沿 B 的坐标轴移动”。</p>
+</section>
+<section class="chapter" id="ch2">
+<div class="num">02 / 几何直觉与方向余弦</div><h2>坐标轴的方向数值从哪里来？先求夹角的余弦</h2>
+<p class="lead">假设 B 的 X 轴转过一个角度。我们想在 A 中写出它的方向 <b>(a,b)</b>。这里不用先记住 <b>(cosθ,sinθ)</b>：<strong>只需分别计算 B 的 X 轴与 A 的 X、Y 轴的夹角余弦</strong>。</p>
+<div class="callout"><b>统一规则：</b>新坐标系的一根<b>单位</b>坐标轴，在原坐标系某根轴上的分量 = <b>这两根轴的夹角的 cos 值</b>。每根轴都按此规则计算，正负号也由 cos 自然决定。</div>
+<h3 id="direction-origin">先以 B 的 X 轴为例：同时比较两根 A 轴</h3>
+<p>暂时让 A、B 原点重合，令 B 绕纸面垂直方向逆时针旋转 θ。取沿 X<sub>B</sub> 正方向的 <b>单位箭头（长度为1）</b>。分别比较它与 X<sub>A</sub>、Y<sub>A</sub> 正方向的夹角：</p>
+<div class="cols"><div class="tile"><strong class="orange-text">第一个分量：与 X<sub>A</sub> 比较</strong><div class="formula">r₁₁ = cos ∠(X<sub>A</sub>, X<sub>B</sub>)</div><p>当前夹角为 θ，因此第一个分量是 <b>cosθ</b>。</p></div><div class="tile"><strong class="green-text">第二个分量：与 Y<sub>A</sub> 比较</strong><div class="formula">r₂₁ = cos ∠(Y<sub>A</sub>, X<sub>B</sub>)</div><p>在0°～180°范围内，夹角为 |90°−θ|；该余弦恰好等于 <b>sinθ</b>。sin只是化简后的写法，原理仍是计算夹角余弦。</p></div></div>
+<div class="interactive">
+<div class="board"><div class="boardtitle"><span>方向余弦实验 · 两根参考轴，各算一个分量</span><small>原点重合；同一根蓝色单位箭头</small></div><svg id="direction-svg" viewBox="0 0 720 440" role="img" aria-label="将B的X轴分别与A的X轴和Y轴比较，得到两个夹角余弦"></svg>
+<div class="legend"><span><i class="dot" style="background:var(--blue)"></i>单位方向 X<sub>B</sub></span><span><i class="dot" style="background:var(--orange)"></i>与 X<sub>A</sub> 的余弦</span><span><i class="dot" style="background:var(--green)"></i>与 Y<sub>A</sub> 的余弦</span><span><i class="dot" style="background:var(--red)"></i>乘距离后的位移</span></div>
+</div>
+<div class="controlbox"><h4>分别观察“角度 → 余弦 → 位移”</h4>
+<div class="slider-item"><div class="slider-label"><label for="direction-theta">B 的 X 轴相对 X<sub>A</sub> 旋转 θ</label><span class="value" id="direction-theta-v">90°</span></div><input id="direction-theta" type="range" min="0" max="180" step="1" value="90"></div>
+<div class="buttons" role="group" aria-label="快速设置旋转角"><button class="btn" data-direction-angle="0">0°</button><button class="btn" data-direction-angle="30">30°</button><button class="btn" data-direction-angle="45">45°</button><button class="btn selected" data-direction-angle="90">90°</button><button class="btn" data-direction-angle="180">180°</button></div>
+<div class="slider-item"><div class="slider-label"><label for="direction-distance">沿 B 的 X 轴移动距离 d</label><span class="value" id="direction-distance-v">1.0</span></div><input id="direction-distance" type="range" min="0" max="2" step="0.1" value="1"></div>
+<div class="metrics"><div class="metric"><small>与 X<sub>A</sub> 夹角 <b id="direction-angle-x">90°</b>，取 cos</small><strong id="direction-cos">0</strong></div><div class="metric green"><small>与 Y<sub>A</sub> 夹角 <b id="direction-angle-y">0°</b>，取 cos</small><strong id="direction-sin">1</strong></div></div>
+<div class="result" aria-live="polite"><span class="row">① B 的 X 轴方向 = (<b id="direction-ex">0</b>, <b id="direction-ey">1</b>)</span><span class="row">② 位移 = 局部移动距离 d × 单位方向</span><span class="row" id="direction-calc">1 × (0,1) = (0,1)</span><span class="row">③ A 中 X、Y 坐标分别变化：<b id="direction-summary">0、+1</b></span></div>
+</div>
+</div>
+<div class="math math-sm">e<sup>A</sup><sub>X_B</sub> = ( cos ∠(X<sub>A</sub>,X<sub>B</sub>), &nbsp;cos ∠(Y<sub>A</sub>,X<sub>B</sub>) )</div>
+<div class="callout"><b>θ=90° 时：</b>X<sub>B</sub> 与 X<sub>A</sub> 夹90°，cos90°=0；与 Y<sub>A</sub> 夹0°，cos0°=1，所以方向是 <b>(0,1)</b>。θ=45° 时，两根 A 轴的夹角均为45°，两个余弦都约为0.707。</div>
+<h3>B 的 Y 轴也按同一规则计算</h3>
+<p>由于 X<sub>B</sub> 与 Y<sub>B</sub> 垂直，若 X<sub>B</sub> 相对 X<sub>A</sub> 逆时针转90°，则 Y<sub>B</sub> 指向 A 的 <b>−X</b>。此时：</p>
+<div class="cols"><div class="tile"><strong class="orange-text">Y<sub>B</sub> 与 X<sub>A</sub> 的夹角</strong><div class="formula">cos180° = <b>−1</b></div><p>所以 Y<sub>B</sub> 在 A 的 X 方向分量是 −1。</p></div><div class="tile"><strong class="green-text">Y<sub>B</sub> 与 Y<sub>A</sub> 的夹角</strong><div class="formula">cos90° = <b>0</b></div><p>所以 Y<sub>B</sub> 在 A 的 Y 方向分量是 0。</p></div></div>
+<div class="math math-sm"><span class="blue-text">X<sub>B</sub> 方向</span> = (cos90°,cos0°) = (0,1)；&nbsp;<span class="green-text">Y<sub>B</sub> 方向</span> = (cos180°,cos90°) = (−1,0)</div>
+<h3>把方向余弦用于两个原点不重合的坐标系</h3>
+<p>现在恢复贯穿本教程的案例：B 的原点在 A 中是 <strong>(2,1)</strong>，B 相对于 A 逆时针旋转 <strong>90°</strong>。通过分别求与 A 的 X、Y 两轴的夹角余弦，我们得到 <b class="blue-text">X<sub>B</sub> 方向 = (cos90°,cos0°)=(0,1)</b>；<b class="green-text">Y<sub>B</sub> 方向 = (cos180°,cos90°)=(−1,0)</b>。两个方向都用同一种方法算出。</p>
+<div class="callout ink"><b>读图之前，请先分清两件事：</b><b>(0,1)</b> 是 B 的 X 轴在 A 中的<strong>单位方向</strong>；<b>(2,1)</b> 是 B 原点在 A 中的<strong>位置坐标</strong>。它们虽然都是两个数字，但表示的物理量不同。</div>
+<div class="interactive">
+<div class="board"><div class="boardtitle"><span>沿新坐标轴一步步走到 P</span><small>固定 B 的方向，改变 P 的局部坐标</small></div><svg id="walk-svg" viewBox="0 0 720 440" role="img" aria-label="A和B的坐标系及分步位移"></svg>
+<div class="legend"><span><i class="dot" style="background:var(--purple)"></i>① 到B原点</span><span><i class="dot" style="background:var(--blue)"></i>② 沿B的X轴</span><span><i class="dot" style="background:var(--green)"></i>③ 沿B的Y轴</span></div></div>
+<div class="controlbox"><h4>实验 A · 先后观察三个步骤</h4>
+<div class="slider-item"><div class="slider-label"><label for="walk-x">沿 B 的 X 轴走多远 x<sub>B</sub></label><span class="value" id="walk-x-value">1.0</span></div><input type="range" id="walk-x" min="0" max="3" step="0.1" value="1"></div>
+<div class="slider-item"><div class="slider-label"><label for="walk-y">沿 B 的 Y 轴走多远 y<sub>B</sub></label><span class="value" id="walk-y-value">2.0</span></div><input type="range" id="walk-y" min="0" max="3" step="0.1" value="2"></div>
+<div class="buttons" role="group" aria-label="展示的位移步骤"><button class="btn" data-walk-step="1">① 只看平移</button><button class="btn" data-walk-step="2">② 加上X位移</button><button class="btn selected" data-walk-step="3">③ 完整到达P</button></div>
+<div class="result" aria-live="polite"><span class="row" id="walk-line-1">① 先到 B 原点： (2,1)</span><span class="row blue-text" id="walk-line-2">② 沿 B 的 X 轴：1 × (0,1) = (0,1)</span><span class="row green-text" id="walk-line-3">③ 沿 B 的 Y 轴：2 × (−1,0) = (−2,0)</span><span class="row" id="walk-line-result"><b>得到 P 在 A 中的坐标：(0,2)</b></span></div>
+<div class="tile" style="margin-top:9px"><strong>把每一步拆成 A 的 X、Y 坐标增量</strong><div class="micro" id="walk-axis-detail" aria-live="polite">第二步：X 增量 0，Y 增量 +1；第三步：X 增量 −2，Y 增量 0。</div></div>
+<div class="buttons"><button class="btn" id="walk-reset">恢复教学案例</button></div>
+</div>
+</div>
+<h3>把“走路”翻译为数学语言</h3>
+<p>先由<strong>与 A 的两根轴的夹角余弦</strong>分别算出单位方向：(cos90°, cos0°)=(0,1)，(cos180°, cos90°)=(−1,0)。随后才乘以局部坐标中的位移长度 x<sub>B</sub>、y<sub>B</sub>。<b>方向来自角度，距离来自点在 B 中的坐标。</b></p>
+<div class="math">p<sub>A</sub> = <span class="purple-text">(2,1)</span> + <span class="blue-text">x<sub>B</sub>(0,1)</span> + <span class="green-text">y<sub>B</sub>(−1,0)</span></div>
+<div class="cols"><div class="tile"><strong>A 中 X 坐标单独计算</strong><div class="formula">x<sub>A</sub>=2 + 1·cos90° + 2·cos180° = 2 + 0 − 2 = <b>0</b></div></div><div class="tile"><strong>A 中 Y 坐标单独计算</strong><div class="formula">y<sub>A</sub>=1 + 1·cos0° + 2·cos90° = 1 + 1 + 0 = <b>2</b></div></div></div><p>于是点在 A 中为 <b>(0,2)</b>。特别注意：“沿 B 的 Y 轴走2”并不是“计算 A 的 Y 坐标”，它同时可能改变 A 的 X、Y 坐标。第3章把方向向量组合为旋转矩阵，第5章再解释为什么矩阵的每一行能够计算 A 中相应的坐标。</p>
+</section>
+<section class="chapter" id="ch3">
+<div class="num">03 / 从方向余弦构造旋转矩阵</div><h2>怎样从方向余弦构造旋转矩阵？先二维，再三维</h2>
+<p class="lead">上一章，我们已经通过夹角余弦求得 B 坐标系中单根坐标轴的方向。本章把这个方法用于 <strong>B 的全部坐标轴</strong>：二维得到 2×2 旋转矩阵，三维得到 3×3 旋转矩阵。每个数值仍使用同一规则：<b>r<sub>ij</sub> = cos ∠(A 的第 i 轴，B 的第 j 轴)</b>。换句话说，每个数字只需回答：<strong>“B 的这根轴，在 A 的那根轴方向上占多少？”</strong></p>
+<div class="math math-sm">r<sub>ij</sub> = e<sub>i,A</sub> · e<sub>j,B</sub> = cos ∠(e<sub>i,A</sub>,e<sub>j,B</sub>)</div>
+<p>这里的角是两根<b>单位轴正方向之间的普通夹角（0°～180°）</b>。cos 值可正、可零、可负；方向余弦并不是角度本身，也不是长度或坐标。</p>
+<h3>第一部分：绕Z轴旋转，先算二维的4个数字</h3>
+<p>B 绕 A 的 Z 轴转 θ 后，X<sub>B</sub>、Y<sub>B</sub> 仍在 XY 平面。对两根 B 轴各与两根 A 轴比较一次，共得到4个数字：</p>
+<div class="table-scroll"><table class="data-table" style="min-width:570px"><thead><tr><th>旋转矩阵位置</th><th>比较哪两根轴</th><th>按夹角取余弦（化简）</th></tr></thead><tbody>
+<tr><td class="mono blue-text">r₁₁</td><td>X<sub>A</sub> 与 X<sub>B</sub></td><td>cos θ</td></tr>
+<tr><td class="mono blue-text">r₂₁</td><td>Y<sub>A</sub> 与 X<sub>B</sub></td><td>cos(90°−θ) = sin θ</td></tr>
+<tr><td class="mono green-text">r₁₂</td><td>X<sub>A</sub> 与 Y<sub>B</sub></td><td>cos(90°+θ) = −sin θ</td></tr>
+<tr><td class="mono green-text">r₂₂</td><td>Y<sub>A</sub> 与 Y<sub>B</sub></td><td>cos θ</td></tr>
+</tbody></table></div>
+<p class="note">上表中的 90°±θ 用于计算余弦的恒等式；当角度超出0°～180°时，可先转换成两轴的真实夹角，余弦值保持相同。<b>sin θ 和 −sin θ 都是化简后的结果，并不是另一套计算原理。</b></p>
+<div class="interactive">
+<div class="board"><div class="boardtitle"><span>实验 B · 拖动 θ 对照四组夹角</span><small>XY 俯视图；Z 轴仍然相同</small></div><svg id="rotation-svg" viewBox="0 0 720 440" role="img" aria-label="旋转后的B轴与A轴的投影关系"></svg><div class="legend"><span><i class="dot" style="background:var(--blue)"></i>B 的 X 轴</span><span><i class="dot" style="background:var(--green)"></i>B 的 Y 轴</span><span><i class="dot" style="background:var(--purple)"></i>B 的原点位置（不影响夹角）</span></div></div>
+<div class="controlbox"><h4>旋转角度 θ</h4><div class="slider-item"><div class="slider-label"><label for="rot-theta">B 相对 A 绕 Z 轴转动</label><span class="value" id="rot-theta-value">90°</span></div><input type="range" id="rot-theta" min="-180" max="180" step="1" value="90"></div><div class="buttons"><button class="btn" data-rot="0">0°</button><button class="btn" data-rot="30">30°</button><button class="btn" data-rot="45">45°</button><button class="btn selected" data-rot="90">90°</button><button class="btn" data-rot="180">180°</button></div>
+<div class="metrics"><div class="metric"><small>cos θ</small><strong id="rot-cos">0</strong></div><div class="metric green"><small>sin θ（余弦化简）</small><strong id="rot-sin">1</strong></div></div>
+<div class="result">X<sub>B</sub> 的两个分量：<b id="rot-xaxis">(0,1,0)</b><br>Y<sub>B</sub> 的两个分量：<b id="rot-yaxis">(−1,0,0)</b></div>
+<div class="tiny">平移原点不会改变两根坐标轴的夹角。</div></div>
+</div>
+<div class="math">R<sub>z</sub>(θ) = <span class="matrix m3"><span class="cb" id="rot-r11">cos θ</span><span class="cg" id="rot-r12">−sin θ</span><span class="co">0</span><span class="cb" id="rot-r21">sin θ</span><span class="cg" id="rot-r22">cos θ</span><span class="co">0</span><span class="cb">0</span><span class="cg">0</span><span class="co">1</span></span></div>
+<h3>第二部分：三维时，三根B轴分别与三根A轴比较</h3>
+<p>三维中不再用单一 θ 描述任意空间方向。我们直接比较 <b>X<sub>B</sub>、Y<sub>B</sub>、Z<sub>B</sub></b> 与 <b>X<sub>A</sub>、Y<sub>A</sub>、Z<sub>A</sub></b>：三根新轴 × 三根参考轴，恰好得到 <b>9 个夹角余弦</b>。</p>
+<div class="math math-sm">R = <span class="matrix m3 wide-angle"><span class="cb">cos∠(X<sub>A</sub>,X<sub>B</sub>)</span><span class="cg">cos∠(X<sub>A</sub>,Y<sub>B</sub>)</span><span class="co">cos∠(X<sub>A</sub>,Z<sub>B</sub>)</span><span class="cb">cos∠(Y<sub>A</sub>,X<sub>B</sub>)</span><span class="cg">cos∠(Y<sub>A</sub>,Y<sub>B</sub>)</span><span class="co">cos∠(Y<sub>A</sub>,Z<sub>B</sub>)</span><span class="cb">cos∠(Z<sub>A</sub>,X<sub>B</sub>)</span><span class="cg">cos∠(Z<sub>A</sub>,Y<sub>B</sub>)</span><span class="co">cos∠(Z<sub>A</sub>,Z<sub>B</sub>)</span></span></div>
+<p>例如 B 的 X 轴如果沿 A 的 Y 正方向，则它与 X<sub>A</sub>、Y<sub>A</sub>、Z<sub>A</sub> 的夹角分别为90°、0°、90°，所以<strong>第一列就是 (cos90°, cos0°, cos90°) = (0,1,0)</strong>。</p>
+<div class="interactive">
+<div class="board"><div class="boardtitle"><span>实验 C · 真正的三维方向余弦</span><small>将三维坐标轴投影到屏幕上</small></div><svg id="rotation3d-svg" viewBox="0 0 720 440" role="img" aria-label="三维A和B坐标轴的示意图，B绕Z轴及局部X轴转动"></svg><div class="legend"><span><i class="dot" style="background:var(--blue)"></i>X<sub>B</sub></span><span><i class="dot" style="background:var(--green)"></i>Y<sub>B</sub></span><span><i class="dot" style="background:var(--orange)"></i>Z<sub>B</sub></span><span><i class="dot" style="background:#8698ad"></i>A 三个参考轴</span></div></div>
+<div class="controlbox"><h4>通过两个旋转观察三维矩阵</h4>
+<div class="slider-item"><div class="slider-label"><label for="rot3-z">先绕 A 的 Z 轴旋转 α</label><span class="value" id="rot3-z-v">60°</span></div><input id="rot3-z" type="range" min="-180" max="180" value="60" step="5"></div>
+<div class="slider-item"><div class="slider-label"><label for="rot3-x">再绕旋转后的 B 的 X 轴旋转 β</label><span class="value" id="rot3-x-v">35°</span></div><input id="rot3-x" type="range" min="-90" max="90" value="35" step="5"></div>
+<div class="buttons"><button class="btn primary" id="rot3-reset">恢复三维案例</button><button class="btn" id="rot3-simple">查看90°/45°</button></div>
+<div class="result" id="rot3-concept" aria-live="polite">选择任意元素，均能找到对应的两根轴和夹角。</div>
+</div>
+</div>
+<div class="note">下面两个视图描述的是同一个旋转矩阵。<b>按行看</b>：第1、2、3行分别对应 A 的 X、Y、Z 轴；<b>按列看</b>：第1、2、3列分别对应 B 的 X、Y、Z 轴。任一格都是相应两根轴夹角的余弦。</div>
+<div class="math"><div class="matrix m3" id="rot3-matrix"></div></div>
+<h3>按矩阵的行和列排列9个方向余弦</h3>
+<p>下表与上面的 3×3 矩阵位置完全一致。<strong>横向看同一行</strong>，是B的三个方向在A某一轴上的投影；<strong>纵向看同一列</strong>，是B某一根轴在A的三个轴上的投影。拖动前面的滑动条，夹角与数值会实时变化。</p>
+<div class="table-scroll"><table class="data-table cos-grid"><thead><tr><th class="axishead">A的轴 ↓   /   B的轴 →</th><th>第1列：X<sub>B</sub></th><th>第2列：Y<sub>B</sub></th><th>第3列：Z<sub>B</sub></th></tr></thead><tbody id="rot3-table"></tbody></table></div>
+<div class="matrix-guide"><span class="mini">第1行 → 三列共同贡献A的X方向</span><span class="mini">第2行 → 三列共同贡献A的Y方向</span><span class="mini">第3行 → 三列共同贡献A的Z方向</span></div>
+<div class="callout ink"><b>读一个数的完整步骤：</b>例如 <b>r₁₂</b>，先找“B 的 Y 轴”和“A 的 X 轴”，再求这两根<b>单位轴</b>的夹角 γ，最后算 <b>cos γ</b>，就是 r₁₂。其它八个元素完全一样，<b>不需要分别记九套sin/cos公式</b>。</div>
+<div class="callout"><b>严格说明：</b>方向余弦矩阵虽有9个数字，但三个单位轴必须两两垂直、遵循右手定则，因此它们不是独立的9个参数，三维旋转只有3个自由度。此处两个滑动条只演示其中一类三维旋转；任意三维姿态还需第三个旋转自由度。</div>
+<div class="callout orange"><b>接下来为什么还需要齐次变换矩阵？</b>本章得到的 <b>R</b> 已经能描述两个坐标系之间的<strong>相对朝向</strong>，但仅有旋转矩阵还不能描述 B 原点在 A 中的<strong>位置</strong>。下章将加入平移向量 <b>t</b>，先得到 <b>p<sub>A</sub> = R p<sub>B</sub> + t</b>，再讨论怎样把这两步运算合并为一次矩阵乘法。</div>
+</section>
+<section class="chapter" id="ch4">
+<div class="num">04 / 从旋转和平移到统一矩阵</div><h2>为什么有了旋转矩阵，还需要齐次变换矩阵？</h2>
+<h3>第一步：旋转矩阵解决方向转换，再加上原点位置</h3>
+<p>第3章已经说明：把 B 的 X、Y、Z 三根单位坐标轴在 A 中的方向向量 <b>e<sub>x</sub>、e<sub>y</sub>、e<sub>z</sub></b> 按列排列，就得到旋转矩阵 <b>R</b>。但B的原点一般不在A的原点，因此除了旋转，还需要加上B原点在A中的位置 <b>t</b>。</p>
+<div class="math math-sm">R = [ e<sub>x</sub> &nbsp; e<sub>y</sub> &nbsp; e<sub>z</sub> ]，&nbsp; p<sub>A</sub> = <b>R p<sub>B</sub> + t</b></div>
+<p>其中 <b>R p<sub>B</sub></b> 将点相对于 B 原点的位移换算到 A 的方向，<b>t</b> 再确定 B 原点在 A 中的位置。这与第2章的“先到B原点，再沿B的轴移动”是同一个几何过程。<strong>单次转换到这里已经能完成，还不必使用齐次变换矩阵。</strong></p>
+<h3>第二步：机械臂有多个关节，需要不断重复坐标转换</h3>
+<p>机械臂需要沿“基座 → 第1关节 → 第2关节 → 末端”逐级换坐标系。若每一步都写成 R p + t，连续两次转换会得到：</p>
+<div class="math math-sm">p<sub>0</sub> = R<sub>01</sub>(R<sub>12</sub>p<sub>2</sub> + t<sub>12</sub>) + t<sub>01</sub><br>= R<sub>01</sub>R<sub>12</sub>p<sub>2</sub> + R<sub>01</sub>t<sub>12</sub> + t<sub>01</sub></div>
+<p><b>注意不能直接把 t<sub>12</sub> 与 t<sub>01</sub> 相加</b>：前者需要先经过 R<sub>01</sub> 旋转，才能用同一个坐标系描述。</p>
+<h3>第三步：把旋转和平移合成一次矩阵乘法</h3>
+<p>为了让平移也能参与矩阵乘法，我们把三维点 <b>(x,y,z)</b> 扩展成 <b>(x,y,z,1)</b>，同时将 <b>R</b> 和 <b>t</b> 组成 4×4 矩阵，最后一行是 <b>(0,0,0,1)</b>。这样原先的“先乘旋转矩阵，再加平移向量”就统一为一次矩阵乘法。</p>
+<div class="math"><span class="mathblock">p̃<sub>A</sub> = T<sub>AB</sub> p̃<sub>B</sub>，T<sub>AB</sub> = <span class="matrix m4"><span class="cb">R₁₁</span><span class="cg">R₁₂</span><span class="co">R₁₃</span><span class="cp">tₓ</span><span class="cb">R₂₁</span><span class="cg">R₂₂</span><span class="co">R₂₃</span><span class="cp">tᵧ</span><span class="cb">R₃₁</span><span class="cg">R₃₂</span><span class="co">R₃₃</span><span class="cp">t𝓏</span><span class="gray">0</span><span class="gray">0</span><span class="gray">0</span><span class="gray">1</span></span></span></div>
+<div class="triple"><div class="tile"><strong>为什么左上角是 3×3？</strong><p>三个新坐标轴，各自都要用原坐标系的三个分量描述，所以有9个方向数值。</p></div><div class="tile"><strong>为什么第四列是 t？</strong><p>位置点最后一个坐标为1，因此 t × 1 正好加到前三个结果中。</p></div><div class="tile"><strong>为什么最后一行是 0 0 0 1？</strong><p>让位置点变换之后的第四个坐标仍为1，同时便于多个刚体变换连乘。</p></div></div>
+<div class="callout"><strong>这是一种计算表示法，不是一条新的物理定律。</strong> 它把已有的几何关系 p<sub>A</sub>=R p<sub>B</sub>+t 统一表达为 p̃<sub>A</sub>=T p̃<sub>B</sub>。因此多个变换可以直接写成 T<sub>02</sub>=T<sub>01</sub>T<sub>12</sub>。</div>
+<details><summary>补充：为什么位置点是 1，方向向量是 0？</summary><div class="tile"><p>位置点 (x,y,z,<b>1</b>) 应同时受旋转和平移影响；方向向量 (v<sub>x</sub>,v<sub>y</sub>,v<sub>z</sub>,<b>0</b>) 只表示方向，不依赖原点，因此最后一列的平移乘以0，不会影响它。这里的 1 和 0 是齐次坐标的表达规则，并不是新增的空间维度。</p></div></details>
+</section>
+<section class="chapter" id="ch5">
+<div class="num">05 / 从列转到行</div><h2>为什么矩阵的第一行能算出新坐标点在 A 中的 X 值？</h2>
+<p><b>按列看：</b>第1、2、3列分别表示 B 的 X、Y、Z <b>单位轴</b>在 A 的 X、Y、Z 方向上的投影。<b>按行看：</b>第1、2、3行分别把 B 的三个局部坐标分量投影到 A 的 X、Y、Z 轴，再加上 B 原点的位置。</p>
+
+<h3>先把这句话读懂：前三列是方向，前三行是计算</h3>
+<p><strong>齐次变换矩阵的前三列记录了 B 坐标系 X、Y、Z 三根单位轴在 A 的三个轴上的投影。</strong> 换言之，一列描述“一根 B 轴朝哪里”；一行描述“B 的三根轴各贡献多少 A 的一个坐标”。第四列则描述 B 原点在 A 中的位置。</p>
+<div class="axis-principle">
+  <div class="tile"><strong>按列读：每列描述一根 B 轴</strong>
+  <div class="short-line">第1列：X<sub>B</sub> → (r₁₁,r₂₁,r₃₁)</div>
+  <div class="short-line">第2列：Y<sub>B</sub> → (r₁₂,r₂₂,r₃₂)</div>
+  <div class="short-line">第3列：Z<sub>B</sub> → (r₁₃,r₂₃,r₃₃)</div>
+  <p>每个 r<sub>ij</sub> 都是某根 B 轴与某根 A 轴的<strong>夹角余弦</strong>，不是沿该轴走了多少距离。</p></div>
+  <div class="tile"><strong>按行算：每行得到 A 中的一个坐标</strong>
+  <div class="short-line">第1行 → x<sub>A</sub>：三个位移的 X 投影 + t<sub>x</sub></div>
+  <div class="short-line">第2行 → y<sub>A</sub>：三个位移的 Y 投影 + t<sub>y</sub></div>
+  <div class="short-line">第3行 → z<sub>A</sub>：三个位移的 Z 投影 + t<sub>z</sub></div>
+  <p>在 B 中沿 X、Y、Z 轴走的距离分别由 <strong>x<sub>B</sub>、y<sub>B</sub>、z<sub>B</sub></strong> 决定。</p></div>
+</div>
+<div class="callout ink"><strong>最容易混淆的一点：</strong>“沿 B 的 X 轴走”不等于“只改变 A 的 X 坐标”。因为 X<sub>B</sub> 可能斜着指向 A 的多个轴；它的运动通常会同时改变 x<sub>A</sub>、y<sub>A</sub>、z<sub>A</sub>。</div>
+<h3>交互实验：选中矩阵的一行，逐项计算 A 中的坐标</h3>
+<p>下面采用一个真正的<strong>三维例子</strong>：B先绕A的Z轴旋转 α，再绕旋转后的X轴旋转 β，三维默认位置为 <b>t=(2,1,0.5)</b>。试着改变角度与点P在B中的坐标，观察第一行、第二行和第三行的计算。</p>
+<div class="v9-lab" id="column-row-lab">
+  <h4>实验 D · 逐列找方向，逐行算坐标（3D）</h4>
+  <div class="v9-sub">矩阵的每个 r<sub>ij</sub> 都显示对应的夹角余弦。<strong>点击“计算X/Y/Z”可以高亮相应的行。</strong></div>
+  <div class="v9-workspace">
+    <div class="v9-panel">
+      <div class="v9-panel-title">① 四列分别表示什么？</div>
+      <div class="table-scroll" style="margin:4px 0"><table class="v9-matrix-table" aria-label="随三维角度更新的方向余弦及平移矩阵"><thead>
+        <tr><th>参考系A ↓</th><th class="v9-col-x">第1列：X<sub>B</sub></th><th class="v9-col-y">第2列：Y<sub>B</sub></th><th class="v9-col-z">第3列：Z<sub>B</sub></th><th class="v9-col-t">第4列：原点</th></tr></thead>
+        <tbody id="v9-matrix-body"></tbody>
+        <tfoot><tr><td colspan="5" style="font-size:12px;padding:7px;color:#667e98;text-align:center">齐次矩阵第4行固定为 [0,0,0,1]；上表展示前三行的方向余弦和平移</td></tr></tfoot>
+      </table></div>
+      <p class="tiny">例如 <b>r₁₂</b> 位于第1行第2列，它是 <b>Y<sub>B</sub></b> 在 <b>X<sub>A</sub></b> 方向上的投影系数：r₁₂=cos∠(X<sub>A</sub>,Y<sub>B</sub>)。</p>
+      <div class="v9-panel-title">② 选择需要计算的 A 坐标</div>
+      <div class="v9-rowbuttons" role="group" aria-label="选择矩阵行">
+        <button type="button" class="btn selected" data-v9-row="0" aria-pressed="true">第1行 → X<sub>A</sub></button>
+        <button type="button" class="btn" data-v9-row="1" aria-pressed="false">第2行 → Y<sub>A</sub></button>
+        <button type="button" class="btn" data-v9-row="2" aria-pressed="false">第3行 → Z<sub>A</sub></button>
+      </div>
+    </div>
+    <div class="v9-panel">
+      <div class="v9-panel-title">调整B的方向和点P的局部坐标</div>
+      <div class="slider-item"><div class="slider-label"><label for="v9-alpha">绕A的Z轴旋转 α</label><span class="value" id="v9-alpha-v">45°</span></div><input type="range" id="v9-alpha" min="-180" max="180" step="5" value="45"></div>
+      <div class="slider-item"><div class="slider-label"><label for="v9-beta">再绕局部X轴旋转 β</label><span class="value" id="v9-beta-v">30°</span></div><input type="range" id="v9-beta" min="-90" max="90" step="5" value="30"></div>
+      <div class="slider-item"><div class="slider-label"><label for="v9-x">沿X<sub>B</sub>移动 x<sub>B</sub></label><span class="value" id="v9-x-v">1.0</span></div><input type="range" id="v9-x" min="-2" max="2" step="0.1" value="1"></div>
+      <div class="slider-item"><div class="slider-label"><label for="v9-y">沿Y<sub>B</sub>移动 y<sub>B</sub></label><span class="value" id="v9-y-v">2.0</span></div><input type="range" id="v9-y" min="-2" max="2" step="0.1" value="2"></div>
+      <div class="slider-item"><div class="slider-label"><label for="v9-z">沿Z<sub>B</sub>移动 z<sub>B</sub></label><span class="value" id="v9-z-v">1.0</span></div><input type="range" id="v9-z" min="-2" max="2" step="0.1" value="1"></div>
+      <div class="buttons"><button class="btn primary" id="v9-reset" type="button">恢复三维示例</button><button class="btn" id="v9-90" type="button">切到90°二维熟悉案例</button></div>
+      <div class="tiny" style="margin-top:8px"><span id="v9-origin-note">当前B原点在A中为 (2,1,0.5)。这是点的起点，不是旋转矩阵的第1列。</span></div>
+    </div>
+  </div>
+  <div class="v9-panel" style="margin-top:13px">
+    <div class="v9-panel-title" id="v9-row-intro">③ 第一行：B的三根轴分别为 A 的 X 坐标贡献多少？</div>
+    <div class="v9-contrib" id="v9-contrib" aria-live="polite"></div>
+    <div class="v9-output"><span id="v9-output-label">前三项位移之和 + B原点的X坐标</span><strong id="v9-output-value">xₐ = 1.836</strong></div>
+    <p class="v9-fullcoords" id="v9-all-coords" aria-live="polite"></p>
+    <p class="tiny" id="v9-delta-note">前三项得到相对于B原点的位移在A的X轴上的投影；加上 tₓ 才得到最终xₐ。</p>
+  </div>
+</div>
+<div class="callout"><strong>现在把几何理解转为矩阵语言：</strong>第1行 [r₁₁,r₁₂,r₁₃,tₓ] 乘以点在B中的齐次坐标 [x<sub>B</sub>,y<sub>B</sub>,z<sub>B</sub>,1]<sup>T</sup>，实质上就是把点沿 B 的三根轴产生的位移分别投影到 A 的 X 轴后相加，再加 B 原点的 X 坐标。第2、3行完全同理。</div>
+<h3>再回到熟悉的二维案例：两根轴如何影响A的X和Y？</h3>
+<p>下面保留原来的二维动画。由于B仅绕Z轴旋转，<b>z<sub>B</sub>=0</b>，所以第三方向没有额外贡献。它与上面的三维计算遵循完全相同的规则。</p>
+<div class="interactive">
+<div class="board"><div class="boardtitle"><span>实验 E · 任意旋转、平移、点坐标</span><small>拖动参数，矩阵和 P 的位置一起变化</small></div><svg id="coord-svg" viewBox="0 0 720 440" role="img" aria-label="坐标系平移旋转与点的实时位置"></svg><div class="legend"><span><i class="dot" style="background:var(--blue)"></i>沿B的X位移</span><span><i class="dot" style="background:var(--green)"></i>沿B的Y位移</span><span><i class="dot" style="background:var(--red)"></i>点P</span></div></div>
+<div class="controlbox"><h4>改变坐标转换参数</h4>
+<div class="slider-item"><div class="slider-label"><label for="c-theta">旋转 θ</label><span class="value" id="c-theta-v">90°</span></div><input id="c-theta" type="range" min="-180" max="180" step="1" value="90"></div>
+<div class="slider-item"><div class="slider-label"><label for="c-x">点在 B 中的 x<sub>B</sub></label><span class="value" id="c-x-v">1.0</span></div><input id="c-x" type="range" min="-2.5" max="2.5" step="0.1" value="1"></div>
+<div class="slider-item"><div class="slider-label"><label for="c-y">点在 B 中的 y<sub>B</sub></label><span class="value" id="c-y-v">2.0</span></div><input id="c-y" type="range" min="-2.5" max="2.5" step="0.1" value="2"></div>
+<div class="cols" style="margin:0;gap:9px"><div class="slider-item"><div class="slider-label"><label for="c-tx">平移 t<sub>x</sub></label><span class="value" id="c-tx-v">2.0</span></div><input id="c-tx" type="range" min="-2" max="3" step="0.1" value="2"></div><div class="slider-item"><div class="slider-label"><label for="c-ty">平移 t<sub>y</sub></label><span class="value" id="c-ty-v">1.0</span></div><input id="c-ty" type="range" min="-2" max="3" step="0.1" value="1"></div></div>
+<div class="buttons"><button class="btn primary" id="coord-reset">恢复90°示例</button></div>
+<div class="metrics"><div class="metric"><small>转换后 x<sub>A</sub></small><strong id="c-result-x">0.000</strong></div><div class="metric green"><small>转换后 y<sub>A</sub></small><strong id="c-result-y">2.000</strong></div></div>
+</div>
+</div>
+<div class="cols"><div><div class="note">当前 4×4 齐次变换矩阵（绕 Z 旋转，z方向不变）</div><div class="math"><div class="matrix m4" id="coord-matrix"></div></div></div><div><div class="note">当前 X 坐标的逐项计算</div><div class="result" id="coord-expression-x" aria-live="polite"></div><div class="note" style="margin-top:8px">当前 Y 坐标的逐项计算</div><div class="result" id="coord-expression-y" aria-live="polite"></div></div></div>
+<div class="callout"><b>理解检验：</b>当 θ=90°，x<sub>B</sub>=1，y<sub>B</sub>=2，t=(2,1) 时，<b>x<sub>A</sub>=0×1 + (−1)×2 +2 =0</b>，<b>y<sub>A</sub>=1×1 +0×2 +1=2</b>。这个结果与第2章用“走路法”得到的结果完全相同。</div>
+<p class="caption">图中滑动时，物理点 P 可以随输入参数变化；固定所有参数后，把 P 的 B 系坐标换算为 A 系坐标，只是同一个点的不同表示。</p>
+</section>
+<section class="chapter" id="ch6">
+<div class="num">06 / 六自由度机械臂 · 正向运动学</div>
+<h2>正向运动学 FK：六个关节角怎样决定末端位姿？</h2>
+<p class="lead">现在把之前的二维坐标转换推广到真正的三维串联机械臂。<strong>已知六个旋转关节角 q₁～q₆，依次建立六次局部坐标变换，连乘后得到末端相对于基座的位置和方向。</strong></p>
+<div class="callout"><b>为什么是六自由度？</b>三维末端<strong>位置有三个分量 (x,y,z)</strong>，末端<strong>姿态有三个转动自由度</strong>。这里的六个旋转关节用于控制完整的三维位姿；但“六自由度”不意味着任意位置和姿态都能到达，还受臂长、关节限位、奇异位形等限制。</div>
+<h3>第一步：先规定这台机械臂的结构、关节轴和零位</h3>
+<p>下面使用一台<strong>教学用的六旋转关节（6R）机械臂</strong>。它不是某个具体品牌产品：这样做是为了让每一个矩阵都能从几何关系清楚地推出来。</p>
+<div class="table-scroll"><table class="data-table six-table"><thead><tr><th>关节</th><th>作用</th><th>相对局部坐标轴</th><th>本例零位 / 正方向</th><th>紧随其后的固定尺寸</th></tr></thead><tbody>
+<tr><td><b>q₁</b></td><td>基座转动</td><td>局部 Z 轴</td><td>零位朝前；按右手定则绕 Z 转</td><td>竖直高度 h = 0.35 m</td></tr>
+<tr><td><b>q₂</b></td><td>肩部俯仰</td><td>局部 Y 轴</td><td>水平伸展为零；绕局部 Y 转</td><td>大臂 L₁ = 0.55 m</td></tr>
+<tr><td><b>q₃</b></td><td>肘部俯仰</td><td>局部 Y 轴</td><td>相对前一连杆伸直为零</td><td>前臂 L₂ = 0.43 m</td></tr>
+<tr><td><b>q₄</b></td><td>腕部滚转</td><td>局部 X 轴</td><td>相对上一级局部坐标系为零</td><td>腕段 a₄ = 0.10 m</td></tr>
+<tr><td><b>q₅</b></td><td>腕部俯仰</td><td>局部 Y 轴</td><td>相对上一级局部坐标系为零</td><td>腕段 a₅ = 0.10 m</td></tr>
+<tr><td><b>q₆</b></td><td>末端滚转</td><td>局部 X 轴</td><td>相对上一级局部坐标系为零</td><td>工具长度 a₆ = 0.19 m</td></tr>
+</tbody></table></div>
+<p class="note">零位时，除基座高度外，各段沿其<strong>局部 X 轴</strong>伸出。角度是关节相对于自身约定零位绕指定局部轴的转角，<strong>不是六根连杆各自与世界X轴的夹角</strong>。真实机器人关节轴与零位因型号而异。</p>
+<div class="stepper"><div class="chip">输入六个关节角<br><b>q = [q₁,…,q₆]</b></div><div class="sep">→</div><div class="chip">构造六个局部变换<br><b>ⁱ⁻¹Tᵢ(qᵢ)</b></div><div class="sep">→</div><div class="chip">按顺序相乘<br><b>⁰T₆ = ⁰T₁…⁵T₆</b></div><div class="sep">→</div><div class="chip">得到末端位姿<br><b>位置 p + 姿态 R</b></div></div>
+<h3>第二步：拖动六个关节角，实时观察三维末端位姿</h3>
+<div class="interactive six-interactive">
+<div class="board"><div class="boardtitle"><span>实验 E · 六自由度机械臂（真实三维几何投影）</span><small>彩色末端轴：X蓝、Y绿、Z橙</small></div><svg id="fk-svg" viewBox="0 0 720 460" role="img" aria-label="可旋转视角的六自由度机械臂，显示六个关节及末端姿态"></svg><div class="legend"><span><i class="dot" style="background:var(--blue)"></i>基座 / 大臂</span><span><i class="dot" style="background:var(--orange)"></i>前臂</span><span><i class="dot" style="background:var(--purple)"></i>腕部</span><span><i class="dot" style="background:var(--green)"></i>末端三轴</span></div>
+<div class="slider-item view-slider"><div class="slider-label"><label for="fk-view">改变观察视角（只改变画面，不改变机器人的姿态）</label><span class="value" id="fk-view-v">−25°</span></div><input id="fk-view" type="range" min="-130" max="130" step="5" value="-25"></div>
+</div>
+<div class="controlbox"><h4>调整六个旋转关节</h4>
+<div id="fk-joint-sliders">
+<div class="slider-item"><div class="slider-label"><label for="fk-q1">q₁ · 基座绕 Z 轴</label><span class="value" id="fk-q1-v">30°</span></div><input id="fk-q1" type="range" min="-170" max="170" value="30" step="1"></div>
+<div class="slider-item"><div class="slider-label"><label for="fk-q2">q₂ · 肩部绕 Y 轴</label><span class="value" id="fk-q2-v">−35°</span></div><input id="fk-q2" type="range" min="-100" max="100" value="-35" step="1"></div>
+<div class="slider-item"><div class="slider-label"><label for="fk-q3">q₃ · 肘部绕 Y 轴</label><span class="value" id="fk-q3-v">−30°</span></div><input id="fk-q3" type="range" min="-155" max="155" value="-30" step="1"></div>
+<div class="slider-item"><div class="slider-label"><label for="fk-q4">q₄ · 腕部绕 X 轴</label><span class="value" id="fk-q4-v">20°</span></div><input id="fk-q4" type="range" min="-180" max="180" value="20" step="1"></div>
+<div class="slider-item"><div class="slider-label"><label for="fk-q5">q₅ · 腕部绕 Y 轴</label><span class="value" id="fk-q5-v">40°</span></div><input id="fk-q5" type="range" min="-130" max="130" value="40" step="1"></div>
+<div class="slider-item"><div class="slider-label"><label for="fk-q6">q₆ · 工具绕 X 轴</label><span class="value" id="fk-q6-v">25°</span></div><input id="fk-q6" type="range" min="-180" max="180" value="25" step="1"></div>
+</div>
+<div class="buttons"><button id="fk-reset" class="btn primary">恢复默认关节角</button><button id="fk-play" class="btn">▶ 六关节联动</button></div>
+<div class="metrics three-metrics"><div class="metric"><small>X（米）</small><strong id="fk-x">—</strong></div><div class="metric green"><small>Y（米）</small><strong id="fk-y">—</strong></div><div class="metric"><small>Z（米）</small><strong id="fk-z">—</strong></div></div>
+<div class="result" id="fk-orient">末端姿态（绕固定参考轴的 Z-Y-X 欧拉角）：—</div>
+</div></div>
+<div class="callout"><b>试一试：</b>只拖动 q₆。你会看到末端的彩色坐标轴转动，但 X、Y、Z 位置可能保持不变。因为本例的 q₆ 绕工具自身 X 轴滚转，而末端参考点恰好位于这根轴上。这说明<strong>关节角的变化不一定使末端位置发生变化，也可能主要改变姿态</strong>。</div>
+<h3>第三步：观察6个 4×4 齐次矩阵如何连乘</h3>
+<p>本例中的每一个变换都由“<b>绕局部关节轴旋转</b> + <b>沿约定的局部轴平移固定连杆长度</b>”组成。六个矩阵是按物理连接顺序相乘的，而不是将六个角度直接相加：</p>
+<div class="math math-sm">⁰T₆(q) = ⁰T₁(q₁) · ¹T₂(q₂) · ²T₃(q₃) · ³T₄(q₄) · ⁴T₅(q₅) · ⁵T₆(q₆)</div>
+<div class="table-scroll"><table class="data-table"><thead><tr><th>局部变换</th><th>本例采用的明确几何操作</th><th>对末端的影响</th></tr></thead><tbody>
+<tr><td>⁰T₁</td><td>R<sub>z</sub>(q₁) · Trans<sub>z</sub>(h)</td><td>基座转向并升高至肩部</td></tr>
+<tr><td>¹T₂</td><td>R<sub>y</sub>(q₂) · Trans<sub>x</sub>(L₁)</td><td>肩关节旋转，大臂伸出</td></tr>
+<tr><td>²T₃</td><td>R<sub>y</sub>(q₃) · Trans<sub>x</sub>(L₂)</td><td>肘关节旋转，前臂伸出</td></tr>
+<tr><td>³T₄</td><td>R<sub>x</sub>(q₄) · Trans<sub>x</sub>(a₄)</td><td>腕部滚转并伸出一段</td></tr>
+<tr><td>⁴T₅</td><td>R<sub>y</sub>(q₅) · Trans<sub>x</sub>(a₅)</td><td>腕部俯仰并伸出一段</td></tr>
+<tr><td>⁵T₆</td><td>R<sub>x</sub>(q₆) · Trans<sub>x</sub>(a₆)</td><td>工具轴滚转并到达末端参考点</td></tr>
+</tbody></table></div>
+<div class="cols"><div class="tile"><strong>选择查看哪个关节的变换？</strong>
+<div class="slider-label" style="margin-top:8px"><label for="fk-mat-joint">第 i 个关节</label><select id="fk-mat-joint" class="kin-select"><option value="1">关节1</option><option value="2">关节2</option><option value="3">关节3</option><option value="4">关节4</option><option value="5">关节5</option><option value="6" selected>关节6</option></select></div>
+<div class="slider-label" style="margin-top:10px"><label for="fk-mat-kind">查看方式</label><select id="fk-mat-kind" class="kin-select"><option value="global">累积变换 ⁰Tᵢ</option><option value="local">局部变换 ⁱ⁻¹Tᵢ</option></select></div>
+<p class="note" id="fk-mat-caption">当前查看 ⁰T₆：末端相对于基座的位姿。</p></div>
+<div class="tile"><strong>矩阵里的数字怎么读？</strong><p>前三列分别是所选局部坐标系的 X、Y、Z 轴<strong>在其参考坐标系中的三个投影分量</strong>；第四列是原点的位置。最终矩阵第一、二、三行用于计算基座系中的 X、Y、Z 坐标。</p></div></div>
+<div class="math"><div id="fk-link-T" class="matrix m4" aria-label="当前选择的四乘四齐次变换矩阵"></div></div>
+<p class="note">单个 ⁱ⁻¹Tᵢ 描述相邻关节坐标系关系；累积 ⁰Tᵢ 把前 i 次变换全部考虑进去。最后的 ⁰T₆ 就是末端相对于基座的完整位姿。</p>
+<div class="callout ink"><b>关节角从哪里来？</b>实际机械臂通常由关节编码器等位置反馈获取关节状态，再结合零位标定、传动比及正方向约定得到 q。不同机械臂的关节轴、零位、尺寸和角度限位并不相同，因此<strong>不能把本例六个矩阵直接套用到所有六轴机械臂</strong>。本例为教学设计的运动学链，而非某品牌的 DH 参数表。</div>
+</section>
+<section class="chapter" id="ch7">
+<div class="num">07 / 六自由度机械臂 · 逆向运动学</div>
+<h2>逆向运动学 IK：已知末端三维位姿，怎样反求六个关节角？</h2>
+<p class="lead">正向运动学计算 <b>q → T</b>。逆向运动学则给出末端希望到达的<strong>三维位置 (x,y,z)</strong>和<strong>三维姿态 R</strong>，寻找满足要求的六个关节角。以下沿用第6章<strong>同一台六轴机械臂、同一套零位与轴定义</strong>。</p>
+<div class="callout"><b>与原来的双连杆例子有什么区别？</b>二维双连杆只要求目标平面位置 (x,y)，可以使用余弦定理得到解析解；六自由度机械臂要同时满足<strong>3个位置条件 + 3个姿态条件</strong>，这里使用数值迭代法求解，并展示误差和可能失败的情况。</div>
+<h3>第一步：指定目标的6个量</h3>
+<div class="interactive six-interactive"><div class="board"><div class="boardtitle"><span>实验 F · 六自由度机械臂的位姿求解</span><small>绿色＝求得的末端；红色＝目标坐标系</small></div><svg id="ik-svg" viewBox="0 0 720 460" role="img" aria-label="六轴机械臂末端与目标三维位姿对比"></svg>
+<div class="legend"><span><i class="dot" style="background:var(--purple)"></i>六关节解</span><span><i class="dot" style="background:var(--red)"></i>目标位置与姿态</span><span><i class="dot" style="background:var(--green)"></i>当前末端位置</span></div>
+<div class="slider-item view-slider"><div class="slider-label"><label for="ik-view">改变观察视角</label><span class="value" id="ik-view-v">−25°</span></div><input id="ik-view" type="range" min="-130" max="130" step="5" value="-25"></div>
+</div>
+<div class="controlbox"><h4>位置目标（米）</h4>
+<div class="slider-item"><div class="slider-label"><label for="ik-tx">目标 X</label><span class="value" id="ik-tx-v">—</span></div><input id="ik-tx" type="range" min="-1.5" max="1.5" step="0.001"></div>
+<div class="slider-item"><div class="slider-label"><label for="ik-ty">目标 Y</label><span class="value" id="ik-ty-v">—</span></div><input id="ik-ty" type="range" min="-1.5" max="1.5" step="0.001"></div>
+<div class="slider-item"><div class="slider-label"><label for="ik-tz">目标 Z</label><span class="value" id="ik-tz-v">—</span></div><input id="ik-tz" type="range" min="-0.5" max="1.5" step="0.001"></div>
+<h4>姿态目标（度）</h4><p class="tiny">这里用<strong>固定坐标系下 Z-Y-X 欧拉角</strong>输入姿态：R = Rz(yaw) · Ry(pitch) · Rx(roll)。这三个角不是机器人关节角 q₁～q₆。</p>
+<div class="slider-item"><div class="slider-label"><label for="ik-yaw">偏航 yaw · 绕 Z</label><span class="value" id="ik-yaw-v">—</span></div><input id="ik-yaw" type="range" min="-180" max="180" step="0.1"></div>
+<div class="slider-item"><div class="slider-label"><label for="ik-pitch">俯仰 pitch · 绕 Y</label><span class="value" id="ik-pitch-v">—</span></div><input id="ik-pitch" type="range" min="-89" max="89" step="0.1"></div>
+<div class="slider-item"><div class="slider-label"><label for="ik-roll">滚转 roll · 绕 X</label><span class="value" id="ik-roll-v">—</span></div><input id="ik-roll" type="range" min="-180" max="180" step="0.1"></div>
+<div class="buttons"><button class="btn primary" id="ik-solve">求解目标位姿</button><button class="btn" id="ik-copy-fk">以FK当前位姿为目标</button><button class="btn" id="ik-reset">示例A</button><button class="btn" id="ik-example2">示例B</button><button class="btn" id="ik-far">不可达目标</button></div>
+<div class="result" id="ik-message" aria-live="polite">点击“求解目标位姿”观察数值逆运动学。</div>
+</div></div>
+<h3>第二步：数值方法如何把“末端误差”转换为“关节角修正”？</h3>
+<p>记正向运动学为 <b>T(q)=F(q)</b>。逆运动学从一组关节角初值出发，计算当前末端位姿，再与目标位姿比较，根据位置和姿态误差逐步调整六个关节角。</p>
+<div class="stepper"><div class="chip">选择关节初值<br><b>q⁽⁰⁾</b></div><div class="sep">→</div><div class="chip">FK算当前位置姿态<br><b>T(q)</b></div><div class="sep">→</div><div class="chip">计算6维位姿误差<br><b>位置 + 旋转</b></div><div class="sep">→</div><div class="chip">用雅可比矩阵修正q<br><b>重复至收敛</b></div></div>
+<div class="math math-sm">Δs ≈ J(q) · Δq，　Δq ≈ (JᵀWJ + λ²I)⁻¹ JᵀW · e</div>
+<p class="note">这里 J 是 6×6 几何雅可比矩阵；W 用于协调位置误差（米）和姿态误差（弧度）的权重，λ 为阻尼参数。网页采用带阻尼的局部数值迭代和多组初值尝试，属于教学演示算法，<strong>不是工业级避碰或全局完备IK求解器</strong>。</p>
+<div class="cols"><div class="tile"><strong>求得的六个关节角</strong><div id="ik-angles" class="ik-angles">尚未求解</div></div><div class="tile"><strong>把解代回正向运动学验证</strong><div class="result" id="ik-verify">位置误差和姿态误差将在求解后显示。</div></div></div>
+<div class="callout orange"><b>为什么可能没有精确解？</b>目标可能超过机械臂几何可达空间、超出关节角限制；也可能位于奇异位形附近，或数值迭代未找到解。网页会如实显示残余误差，<strong>不把“迭代未收敛”冒充为“数学上无解”</strong>。不同关节配置也可能满足同一个末端位姿。</div>
+</section>
+<section class="chapter" id="ch8">
+<div class="num">08 / 系统理解</div><h2>将坐标转换、齐次矩阵、FK 和 IK 串成一条逻辑链</h2>
+<div class="timeline"><div class="trow"><div class="bubble">1</div><p><b>先建立坐标系。</b> 同一个点在不同坐标系下的数字可能不同。</p></div><div class="trow"><div class="bubble">2</div><p><b>计算轴间夹角余弦，再确定原点。</b> B的每根轴分别与A的各轴求夹角余弦，得到方向；乘以局部位移后再加原点坐标。</p></div><div class="trow"><div class="bubble">3</div><p><b>先构造 R，再将旋转和平移统一起来。</b> R p + t 写成齐次坐标形式 T p̃，便于多次变换相乘。</p></div><div class="trow"><div class="bubble">4</div><p><b>从关节到末端（FK）。</b> 多个关节的变换矩阵连乘，求出末端位姿。</p></div><div class="trow"><div class="bubble">5</div><p><b>从末端目标回到关节（IK）。</b> 反求能实现目标的关节角，可能多解或无解。</p></div></div>
+<div class="cols"><div class="tile"><strong>正向运动学 FK</strong><p>已知六个关节角 q₁～q₆，通过六个 4×4 矩阵连乘计算末端位姿 T = F(q)。</p><div class="formula">q → T</div></div><div class="tile"><strong>逆向运动学 IK</strong><p>已知目标三维位置与姿态 T*，数值求解六个关节角 q，使 F(q) 尽量接近 T*。</p><div class="formula">T* → q（可能多解/无解）</div></div></div>
+<div class="callout ink"><b>术语区分：</b>本教程讨论的是<strong>运动学（Kinematics）</strong>，研究位置、姿态与关节配置的几何关系。<strong>动力学（Dynamics）</strong>还要研究质量、惯量、力与力矩，属于不同层次的问题。</div>
+<h3>自测：看看是否真正理解了</h3><div class="quiz">
+<details><summary>问题1：为什么沿 B 的 X 轴走1单位，在90°案例中是加 (0,1)？</summary><p>因为 ∠(X_A,X_B)=90°，∠(Y_A,X_B)=0°，所以 B 的 X 轴在 A 中的单位方向是 (cos90°,cos0°)=(0,1)。沿此方向走1单位，位移就是 (0,1)。</p></details>
+<details><summary>问题2：旋转矩阵中 r₁₂ 究竟是怎么得到的？</summary><p>r₁₂=cos∠(X_A,Y_B)，表示 B 的 Y 轴在 A 的 X 轴方向上的分量。绕Z轴旋转θ时，这个余弦可写成 cos(θ+90°)=−sinθ。</p></details>
+<details><summary>问题3：为什么第一行可以算出 A 坐标系中的 X 值？</summary><p>因为第一行保存了 B 的 X、Y、Z 三个单位轴分别在 A 的 X 方向上的投影系数，依次乘以 B 中对应的局部坐标，再加 B 原点的 X 坐标。</p></details>
+<details><summary>问题4：为什么有了 R p + t，还需要齐次变换矩阵？</summary><p>R p + t 已能完成单次转换；齐次矩阵把旋转和平移合并成一次矩阵乘法，多个坐标系之间的变换就可以直接连乘。</p></details>
+<details><summary>问题5：末端三维位姿确定后，能不能唯一确定六个关节角？</summary><p>不一定。即使三维位置和姿态都指定，也可能存在多个关节角配置；如果目标不可达，或受到角度限位等约束，也可能没有满足条件的解。数值算法不收敛不一定意味着数学上无解。</p></details>
+</div>
+<p class="caption">说明：本教程示例中的旋转遵循右手坐标系约定；二维示意图是绕Z轴旋转的XY投影。三维示意图为投影图，不代表三维坐标系在纸面上真正共面。正逆运动学演示使用教学设计的空间六旋转关节（6R）机械臂，并采用与其一致的正向运动学及数值逆运动学求解。</p>
+</section>
+<div class="footer">交互式机器人运动学教程 V9 · 独立HTML · 无需联网 · <a href="#top">回到顶部 ↑</a></div>
+</main></div>
+<script>
+'use strict';
+const $=(s)=>document.querySelector(s), $$=(s)=>document.querySelectorAll(s), rad=Math.PI/180;
+const colors={blue:'#2872c7',green:'#168b77',orange:'#d88425',purple:'#8557c1',red:'#cf4b54',gray:'#8698ad',ink:'#243b55'};
+const num=(v,d=3)=>Math.abs(v)<Math.pow(10,-d)/2?'0':Number(v).toFixed(d);
+const n1=v=>num(v,1), negzero=v=>Math.abs(v)<1e-9?0:v;
+const fsign=v=>v<0?'−':''; const fnum=(v,d=2)=>Math.abs(v)<Math.pow(10,-d)/2?'0':fsign(v)+num(Math.abs(v),d);
+const set=(id,t)=>{let el=document.getElementById(id);if(el)el.textContent=t};
+function lg(x,y,s,c='#243b55',sz=15,anchor='start',wt=600){return `<text x="${x}" y="${y}" font-size="${sz}" text-anchor="${anchor}" font-family="Microsoft YaHei,PingFang SC,sans-serif" font-weight="${wt}" fill="${c}">${s}</text>`}
+function line(x1,y1,x2,y2,color,width=2,more=''){return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="${width}" stroke-linecap="round" ${more}/>`}
+function circ(x,y,r,c,more=''){return `<circle cx="${x}" cy="${y}" r="${r}" fill="${c}" ${more}/>`}
+function shapeDef(){return `<defs>${[['b',colors.blue],['g',colors.green],['p',colors.purple],['r',colors.red],['o',colors.orange],['s',colors.gray]].map(([id,c])=>`<marker id="ar-${id}" viewBox="0 0 10 10" refX="8.2" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="${c}"/></marker>`).join('')}</defs>`}
+function arr(x1,y1,x2,y2,color,width=3,id='b'){return line(x1,y1,x2,y2,color,width,`marker-end="url(#ar-${id})"`)}
+function chartBase(ox,oy,unit,lab=true){let s=shapeDef();for(let k=-9;k<=9;k++){const xx=ox+k*unit,yy=oy+k*unit;if(xx>=10&&xx<=710)s+=line(xx,17,xx,423,'#e7eef6',1);if(yy>=17&&yy<=423)s+=line(12,yy,710,yy,'#e7eef6',1)}s+=line(12,oy,708,oy,'#a8b7c7',1.7)+line(ox,422,ox,15,'#a8b7c7',1.7);if(lab){s+=lg(686,oy-12,'X_A',colors.gray,14)+lg(ox+10,22,'Y_A',colors.gray,14)}s+=circ(ox,oy,3,colors.gray);return s}
+function drawMatrix(el,vals,types,cols=4,digits=3){const e=typeof el==='string'?document.getElementById(el):el;e.innerHTML=vals.map((v,i)=>`<span class="${types?.[i%cols]||'gray'}" title="${v}">${typeof v==='number'?fnum(v,digits):v}</span>`).join('')}
+function f2(v){return fnum(v,2)}
+// 02: derive unit-direction components from axis-to-axis direction cosines.
+function renderDirection(){
+const deg=+$('#direction-theta').value,d=+$('#direction-distance').value,th=deg*rad,c=Math.cos(th),sn=Math.sin(th);
+const dx=d*c,dy=d*sn,ox=300,oy=307,u=105,unitX=ox+u*c,unitY=oy-u*sn,px=ox+u*dx,py=oy-u*dy;
+set('direction-theta-v',deg+'°');set('direction-distance-v',n1(d));
+set('direction-cos',fnum(c,3));set('direction-sin',fnum(sn,3));
+set('direction-angle-x',deg+'°');set('direction-angle-y',Math.abs(90-deg)+'°');
+set('direction-ex',fnum(c,3));set('direction-ey',fnum(sn,3));
+set('direction-calc',`${n1(d)} × (${fnum(c,3)}, ${fnum(sn,3)}) = (${fnum(dx,3)}, ${fnum(dy,3)})`);
+set('direction-summary',`X方向位移 ${fnum(dx,3)}，Y方向位移 ${fnum(dy,3)}`);
+$$('[data-direction-angle]').forEach(b=>b.classList.toggle('selected',+b.dataset.directionAngle===deg));
+let h=chartBase(ox,oy,u);
+h+=`<circle cx="${ox}" cy="${oy}" r="${u}" fill="none" stroke="#c7d7e8" stroke-dasharray="5 6" stroke-width="1.6"/>`;
+// unit vector components: horizontal signed cos, vertical signed sin
+h+=line(ox,oy,unitX,oy,colors.orange,5)+line(unitX,oy,unitX,unitY,colors.green,5);
+h+=arr(ox,oy,unitX,unitY,colors.blue,4,'b');
+// actual displacement ends at d times the same unit direction
+h+=line(ox,oy,px,py,colors.red,2,`stroke-dasharray="6 5"`);
+h+=circ(unitX,unitY,5,colors.blue,'stroke="#fff" stroke-width="1.8"');
+h+=circ(px,py,8,colors.red,'stroke="#fff" stroke-width="2"');
+if(deg>0){let aR=37;h+=`<path d="M ${ox+aR} ${oy} A ${aR} ${aR} 0 0 0 ${ox+aR*c} ${oy-aR*sn}" fill="none" stroke="${colors.purple}" stroke-width="2"/>`}
+h+=lg(ox+45,oy-14,'θ',colors.purple,16);
+h+=lg(18,33,`与 X_A 夹角 ${deg}° → cos=${fnum(c,3)}`,colors.orange,17);
+h+=lg(18,58,`与 Y_A 夹角 ${Math.abs(90-deg)}° → cos=${fnum(sn,3)}`,colors.green,16);
+// place readout away from the vector endpoint, including obtuse angles
+let tx=unitX+12,ty=unitY-10;if(deg>130){tx=unitX-10;ty=unitY-11}
+h+=lg(tx,ty,'单位箭头',colors.blue,13,deg>130?'end':'start');
+if(d>0&&Math.abs(d-1)>.05){h+=lg(px+8,py-13,'走 d 后',colors.red,13)}
+$('#direction-svg').innerHTML=h;
+}
+$('#direction-theta').addEventListener('input',renderDirection);
+$('#direction-distance').addEventListener('input',renderDirection);
+$$('[data-direction-angle]').forEach(b=>b.addEventListener('click',()=>{$('#direction-theta').value=b.dataset.directionAngle;renderDirection()}));
+// 02: geometry first
+let walkStep=3;
+function renderWalk(){let xb=+$('#walk-x').value,yb=+$('#walk-y').value;set('walk-x-value',n1(xb));set('walk-y-value',n1(yb));
+let ox=247,oy=350,u=65,pt=(x,y)=>[ox+x*u,oy-y*u];let oB=pt(2,1), q=pt(2,1+xb),p=pt(2-yb,1+xb);
+let h=chartBase(ox,oy,u);let vx=pt(2,3.4),vy=pt(-.3,1),xF=walkStep>=2?xb:0,yF=walkStep>=3?yb:0,P=pt(2-yF,1+xF);
+h+=arr(ox,oy,oB[0],oB[1],colors.purple,3,'p');h+=arr(...oB,...vx,colors.blue,2.4,'b');h+=arr(...oB,...vy,colors.green,2.4,'g');
+h+=lg(vx[0]+12,vx[1]+6,'X_B',colors.blue,15)+lg(vy[0]-13,vy[1]-12,'Y_B',colors.green,15);
+if(walkStep>=2)h+=line(...oB,...q,colors.blue,6);
+if(walkStep>=3)h+=line(...q,...p,colors.green,6);
+h+=circ(...oB,6,colors.purple,'stroke="#fff" stroke-width="2"')+lg(oB[0]+12,oB[1]+22,'B(2,1)',colors.purple,14);
+h+=circ(...P,7,colors.red,'stroke="#fff" stroke-width="2"')+lg(P[0]+11,P[1]-12,walkStep===3?'P':walkStep===2?'中间点':'B 原点',colors.red,15);
+h+=lg(20,36,`坐标：(${f2(2-yF)}, ${f2(1+xF)})`,colors.ink,19);
+if(walkStep>=2){let mx=(oB[0]+q[0])/2+12,my=(oB[1]+q[1])/2;h+=lg(mx,my,'② 走 '+n1(xb),colors.blue,14)}
+if(walkStep>=3){let mx=(q[0]+p[0])/2-30,my=q[1]-14;h+=lg(mx,my,'③ 走 '+n1(yb),colors.green,14)}
+$('#walk-svg').innerHTML=h;
+set('walk-line-1','① 先到 B 原点： (2,1)');set('walk-line-2',`② 沿 B 的 X 轴走${n1(xb)}：方向=(cos90°,cos0°)=(0,1)，位移=(0,${n1(xb)})${walkStep<2?'（暂未执行）':''}`);
+set('walk-line-3',`③ 沿 B 的 Y 轴走${n1(yb)}：方向=(cos180°,cos90°)=(−1,0)，位移=(${fnum(-yb,1)},0)${walkStep<3?'（暂未执行）':''}`);
+set('walk-line-result',`当前所示位置在 A 中是 (${fnum(2-yF,2)},${fnum(1+xF,2)})`);
+set('walk-axis-detail',`② 对 A 的 X、Y 坐标分别贡献：(${n1(xb)}×cos90°，${n1(xb)}×cos0°)=(0，${n1(xb)})；③ 分别贡献：(${n1(yb)}×cos180°，${n1(yb)}×cos90°)=(${fnum(-yb,1)}，0)。`);
+$$('[data-walk-step]').forEach(b=>b.classList.toggle('selected',+b.dataset.walkStep===walkStep));
+}
+$$('[data-walk-step]').forEach(b=>b.addEventListener('click',()=>{walkStep=+b.dataset.walkStep;renderWalk()}));
+['walk-x','walk-y'].forEach(id=>$('#'+id).addEventListener('input',renderWalk));
+$('#walk-reset').addEventListener('click',()=>{$('#walk-x').value=1;$('#walk-y').value=2;walkStep=3;renderWalk()});
+// 04: axis-angle cosines for the planar rotation example.
+function renderRotation(){let a=+$('#rot-theta').value,theta=a*rad,c=Math.cos(theta),s=Math.sin(theta);set('rot-theta-value',a+'°');set('rot-cos',num(c));set('rot-sin',num(s));set('rot-xaxis',`(${fnum(c)}, ${fnum(s)}, 0)`);set('rot-yaxis',`(${fnum(-s)}, ${fnum(c)}, 0)`);
+for(let [id,v] of [['rot-r11',c],['rot-r12',-s],['rot-r21',s],['rot-r22',c]])set(id,fnum(v,3));
+
+$$('[data-rot]').forEach(b=>b.classList.toggle('selected',+b.dataset.rot===a));
+let ox=255,oy=296,u=76,pt=(x,y)=>[ox+x*u,oy-y*u],B=pt(2,1),X=pt(2+1.45*c,1+1.45*s),Y=pt(2-1.45*s,1+1.45*c);
+let h=chartBase(ox,oy,u);h+=arr(ox,oy,...B,colors.purple,2.8,'p');h+=arr(...B,...X,colors.blue,4,'b');h+=arr(...B,...Y,colors.green,4,'g');
+h+=circ(...B,6,colors.purple)+lg(B[0]+11,B[1]+18,'B',colors.purple,15);
+h+=lg(X[0]+12,X[1]-7,'X_B',colors.blue,16)+lg(Y[0]+12,Y[1]-7,'Y_B',colors.green,16);
+h+=lg(18,35,`θ = ${a}°`,colors.ink,20);
+h+=lg(18,61,`X_B = (${fnum(c,2)},${fnum(s,2)})`,colors.blue,15);
+h+=lg(18,83,`Y_B = (${fnum(-s,2)},${fnum(c,2)})`,colors.green,15);
+$('#rotation-svg').innerHTML=h;
+}
+$('#rot-theta').addEventListener('input',renderRotation);$$('[data-rot]').forEach(b=>b.addEventListener('click',()=>{$('#rot-theta').value=b.dataset.rot;renderRotation()}));
+
+// 04: 3D rotation = Rz(alpha) Rx(beta): each matrix entry is an axis-to-axis direction cosine.
+const axisShort=['X','Y','Z'];
+function renderRotation3D(){
+const az=+$('#rot3-z').value,ax=+$('#rot3-x').value,a=az*rad,b=ax*rad;
+const c=Math.cos(a),s=Math.sin(a),k=Math.cos(b),h=Math.sin(b);
+const R=[[c,-s*k,s*h],[s,c*k,-c*h],[0,h,k]];
+set('rot3-z-v',az+'°');set('rot3-x-v',ax+'°');
+const fAngle=(v)=>Math.acos(Math.min(1,Math.max(-1,v)))/rad;
+ let values=[],rows=[];
+ for(let i=0;i<3;i++){
+  let cells=[];
+  for(let j=0;j<3;j++){
+   let v=R[i][j],angle=fAngle(v);
+   values.push(v);
+   cells.push(`<td><span class="elem">r${i+1}${j+1}</span><span class="pair">cos∠(${axisShort[i]}<sub>A</sub>, ${axisShort[j]}<sub>B</sub>)</span><span class="actual">夹角 ${fnum(angle,1)}°，余弦 <strong>${fnum(v,3)}</strong></span></td>`);
+  }
+  rows.push(`<tr><th class="axishead">第${i+1}行：${axisShort[i]}<sub>A</sub></th>${cells.join('')}</tr>`);
+ }
+ drawMatrix('rot3-matrix',values,['cb','cg','co'],3,3);
+ $('#rot3-table').innerHTML=rows.join('');
+set('rot3-concept',`例如 r₁₂ = cos∠(X_A,Y_B) = ${fnum(R[0][1],3)}；两轴夹角约 ${fnum(fAngle(R[0][1]),1)}°。`);
+let ox=360,oy=258,unit=154;
+const proj=(v)=>[ox+unit*(.9*v[0]-.62*v[1]),oy+unit*(.33*v[0]+.37*v[1]-.95*v[2])];
+const abasis=[[1,0,0],[0,1,0],[0,0,1]],bbasis=[R.map(row=>row[0]),R.map(row=>row[1]),R.map(row=>row[2])];
+let out=shapeDef();
+out+=`<rect x="14" y="12" width="692" height="415" rx="10" fill="#f8fbff" stroke="#e2ebf6"/>`;
+// rendered old A axes in neutral gray
+for(let j=0;j<3;j++){let p=proj(abasis[j]);out+=line(ox,oy,...p,'#a0afc3',3,'stroke-dasharray="7 5"');out+=circ(...p,4,'#a0afc3');out+=lg(p[0]+(j===1?-13:12),p[1]+(j===2?-10:18),axisShort[j]+'_A','#8190a7',16,j===1?'end':'start')}
+const colorList=[colors.blue,colors.green,colors.orange],mark=['b','g','o'];
+for(let j=0;j<3;j++){let p=proj(bbasis[j]);out+=arr(ox,oy,...p,colorList[j],5,mark[j]);out+=lg(p[0]+(j===1?-10:11),p[1]+(j===2?-12:17),axisShort[j]+'_B',colorList[j],17,j===1?'end':'start')}
+out+=circ(ox,oy,5,'#65758b');out+=lg(20,38,`先绕 Z_A 旋转 ${az}°，再绕新 X_B 旋转 ${ax}°`,colors.ink,18);
+out+=lg(20,65,`X_B = (${R.map(row=>fnum(row[0],2)).join(', ')})`,colors.blue,15);
+out+=lg(20,88,`Y_B = (${R.map(row=>fnum(row[1],2)).join(', ')})`,colors.green,15);
+out+=lg(20,111,`Z_B = (${R.map(row=>fnum(row[2],2)).join(', ')})`,colors.orange,15);
+out+=lg(20,405,'灰色虚线：A的轴；彩色实线：B的轴（空间投影示意）',colors.gray,13);
+$('#rotation3d-svg').innerHTML=out;
+}
+['rot3-z','rot3-x'].forEach(id=>$('#'+id).addEventListener('input',renderRotation3D));
+$('#rot3-reset').addEventListener('click',()=>{$('#rot3-z').value=60;$('#rot3-x').value=35;renderRotation3D()});
+$('#rot3-simple').addEventListener('click',()=>{$('#rot3-z').value=90;$('#rot3-x').value=45;renderRotation3D()});
+
+
+// V9: 同一个三维齐次矩阵，按列读方向，按行计算点的A坐标。
+let v9SelectedRow=0,v9T=[2,1,.5];
+const v9Rows=['X','Y','Z'],v9Sub=['₁','₂','₃'],v9Cols=['X','Y','Z'];
+function v9Render(){
+ const alpha=Number($('#v9-alpha').value)*rad,beta=Number($('#v9-beta').value)*rad;
+ const c=Math.cos(alpha),s=Math.sin(alpha),cb=Math.cos(beta),sb=Math.sin(beta);
+ // B先绕A的Z轴转alpha，再绕B的局部X轴转beta: R=Rz(alpha)Rx(beta)
+ const R=[[c,-s*cb,s*sb],[s,c*cb,-c*sb],[0,sb,cb]];
+ const p=[Number($('#v9-x').value),Number($('#v9-y').value),Number($('#v9-z').value)];
+ const t=v9T;const out=R.map((row,i)=>t[i]+row.reduce((sum,v,j)=>sum+v*p[j],0));
+ [['v9-alpha-v',Number($('#v9-alpha').value)+'°'],['v9-beta-v',Number($('#v9-beta').value)+'°'],['v9-x-v',n1(p[0])],['v9-y-v',n1(p[1])],['v9-z-v',n1(p[2])]].forEach(([id,value])=>set(id,value));
+ set('v9-origin-note','当前B原点在A中为 ('+t.join(', ')+')。这是点的起点，不是旋转矩阵的第1列。');
+ const digits=['₁','₂','₃'];
+ const body=R.map((row,i)=>'<tr class="'+(i===v9SelectedRow?'is-active':'')+'"><th class="v9-row-label">第'+(i+1)+'行 / '+v9Rows[i]+'<sub>A</sub></th>'+row.map((v,j)=>{let degrees=Math.acos(Math.max(-1,Math.min(1,v)))/rad;return '<td><span class="v9-cell-label v9-col-'+['x','y','z'][j]+'">r'+digits[i]+digits[j]+'</span><span class="v9-angle">轴间夹角 '+fnum(degrees,1)+'°</span><span class="v9-number">cos = '+fnum(v,3)+'</span></td>'}).join('')+'<td><span class="v9-cell-label v9-col-t">t'+['ₓ','ᵧ','𝓏'][i]+'</span><span class="v9-angle">B原点位置</span><span class="v9-number">'+fnum(t[i],2)+'</span></td></tr>').join('');
+ $('#v9-matrix-body').innerHTML=body;
+ const i=v9SelectedRow,change=R[i].reduce((sum,v,j)=>sum+v*p[j],0);
+ const labels=['X','Y','Z'];
+ $('#v9-row-intro').textContent='③ 第'+(i+1)+'行：B的三根轴分别对A的'+labels[i]+'坐标贡献多少？';
+ $('#v9-contrib').innerHTML=R[i].map((r,j)=>'<div class="v9-term"><small>沿 B 的'+labels[j]+'轴位移 → A 的'+labels[i]+'投影</small><span class="v9-calc">'+fnum(p[j],2)+' × '+fnum(r,3)+'</span><b>'+fnum(p[j]*r,3)+'</b></div>').join('')+
+ '<div class="v9-term"><small>加上 B 原点在 A 的'+labels[i]+'坐标</small><span class="v9-calc">+ t'+['ₓ','ᵧ','𝓏'][i]+'</span><b>+'+fnum(t[i],3)+'</b></div>';
+ $('#v9-output-label').textContent='三个位移投影合计 '+fnum(change,3)+'，再加原点坐标 '+fnum(t[i],3);
+ $('#v9-output-value').textContent=['x','y','z'][i]+'A = '+fnum(out[i],3);
+ $('#v9-all-coords').textContent='完整结果：点P在B中为 ('+p.map(v=>fnum(v,1)).join(', ')+')；在A中为 ('+out.map(v=>fnum(v,3)).join(', ')+')。';
+ $('#v9-delta-note').textContent='前三项之和 Δ'+['x','y','z'][i]+'A='+fnum(change,3)+' 是相对 B 原点的'+labels[i]+'方向位移；再加 t'+['ₓ','ᵧ','𝓏'][i]+'='+fnum(t[i],3)+'，得到最终坐标。';
+ $$('[data-v9-row]').forEach(b=>{let active=Number(b.dataset.v9Row)===i;b.classList.toggle('selected',active);b.setAttribute('aria-pressed',String(active));});
+}
+['v9-alpha','v9-beta','v9-x','v9-y','v9-z'].forEach(id=>$('#'+id).addEventListener('input',v9Render));
+$$('[data-v9-row]').forEach(b=>b.addEventListener('click',()=>{v9SelectedRow=Number(b.dataset.v9Row);v9Render()}));
+$('#v9-reset').addEventListener('click',()=>{v9T=[2,1,.5];['v9-alpha','v9-beta','v9-x','v9-y','v9-z'].forEach((id,k)=>$('#'+id).value=[45,30,1,2,1][k]);v9SelectedRow=0;v9Render()});
+$('#v9-90').addEventListener('click',()=>{v9T=[2,1,0];['v9-alpha','v9-beta','v9-x','v9-y','v9-z'].forEach((id,k)=>$('#'+id).value=[90,0,1,2,0][k]);v9SelectedRow=0;v9Render()});
+
+// 05: coordinate transform
+const coordIds=['c-theta','c-x','c-y','c-tx','c-ty'];
+function renderCoord(){let deg=+$('#c-theta').value,theta=deg*rad,xb=+$('#c-x').value,yb=+$('#c-y').value,tx=+$('#c-tx').value,ty=+$('#c-ty').value,c=Math.cos(theta),s=Math.sin(theta),X=tx+c*xb-s*yb,Y=ty+s*xb+c*yb;
+let controlValues=[deg+'°',n1(xb),n1(yb),n1(tx),n1(ty)];['c-theta-v','c-x-v','c-y-v','c-tx-v','c-ty-v'].forEach((id,i)=>set(id,controlValues[i]));set('c-result-x',fnum(X));set('c-result-y',fnum(Y));
+drawMatrix('coord-matrix',[c,-s,0,tx,s,c,0,ty,0,0,1,0,0,0,0,1],['cb','cg','co','cp'],4,2);
+$('#coord-expression-x').innerHTML=`x<sub>A</sub> = (${fnum(c,2)}) × (${fnum(xb,2)}) + (${fnum(-s,2)}) × (${fnum(yb,2)}) + (${fnum(tx,2)}) = <b>${fnum(X,3)}</b>`;
+$('#coord-expression-y').innerHTML=`y<sub>A</sub> = (${fnum(s,2)}) × (${fnum(xb,2)}) + (${fnum(c,2)}) × (${fnum(yb,2)}) + (${fnum(ty,2)}) = <b>${fnum(Y,3)}</b>`;
+let ox=315,oy=235,u=51,pt=(x,y)=>[ox+x*u,oy-y*u],B=pt(tx,ty),Q=pt(tx+c*xb,ty+s*xb),P=pt(X,Y),Bx=pt(tx+c*1.6,ty+s*1.6),By=pt(tx-s*1.6,ty+c*1.6);
+let h=chartBase(ox,oy,u);h+=arr(ox,oy,...B,colors.purple,2.4,'p');h+=arr(...B,...Bx,colors.blue,2.8,'b')+arr(...B,...By,colors.green,2.8,'g');h+=line(...B,...Q,colors.blue,5)+line(...Q,...P,colors.green,5);
+h+=circ(...B,5,colors.purple)+circ(...P,7,colors.red,'stroke="#fff" stroke-width="2"');h+=lg(B[0]+8,B[1]+21,'B',colors.purple,14)+lg(P[0]+10,P[1]-12,'P',colors.red,18);h+=lg(Bx[0]+10,Bx[1]-8,'X_B',colors.blue,15)+lg(By[0]+10,By[1]-8,'Y_B',colors.green,15);
+h+=lg(15,30,`P_A = (${fnum(X,2)}, ${fnum(Y,2)})`,colors.ink,19);
+$('#coord-svg').innerHTML=h;
+}
+coordIds.forEach(id=>$('#'+id).addEventListener('input',renderCoord));$('#coord-reset').addEventListener('click',()=>{let vs=[90,1,2,2,1];coordIds.forEach((id,i)=>$('#'+id).value=vs[i]);renderCoord()});
+// 06–07: a genuine spatial six-revolute-joint kinematic chain (not a two-link surrogate).
+const DEG=Math.PI/180;
+const SIX_DEFAULT=[30,-35,-30,20,40,25], SIX_B=[-35,-25,70,-30,-35,85];
+const SIX_LIMITS=[[-170,170],[-100,100],[-155,155],[-180,180],[-130,130],[-180,180]];
+const SIX_AXES=[[0,0,1],[0,1,0],[0,1,0],[1,0,0],[0,1,0],[1,0,0]];
+const SIX_LEN=[.35,.55,.43,.10,.10,.19];
+const eye4=()=>[[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]];
+const mm4=(A,B)=>A.map((r,i)=>r.map((_,j)=>r.reduce((s,x,k)=>s+x*B[k][j],0)));
+const tr4=(x=0,y=0,z=0)=>[[1,0,0,x],[0,1,0,y],[0,0,1,z],[0,0,0,1]];
+function rot4(axis,a){const c=Math.cos(a),s=Math.sin(a);if(axis===0)return [[1,0,0,0],[0,c,-s,0],[0,s,c,0],[0,0,0,1]];if(axis===1)return [[c,0,s,0],[0,1,0,0],[-s,0,c,0],[0,0,0,1]];return [[c,-s,0,0],[s,c,0,0],[0,0,1,0],[0,0,0,1]]}
+const xyz4=T=>[T[0][3],T[1][3],T[2][3]];
+const r33=T=>T.slice(0,3).map(r=>r.slice(0,3));
+const matVec=(M,v)=>M.map(row=>row.reduce((s,x,k)=>s+x*v[k],0));
+const vadd=(a,b)=>a.map((v,i)=>v+b[i]), vsub=(a,b)=>a.map((v,i)=>v-b[i]), vdot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
+const vcross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+const vnorm=v=>Math.hypot(...v);
+function local6(q,i){let ax=[2,1,1,0,1,0][i];let r=rot4(ax,q[i]*DEG);let shift=i===0?tr4(0,0,SIX_LEN[i]):tr4(SIX_LEN[i],0,0);return mm4(r,shift)}
+function kin6(q){let cur=eye4(),locals=[],cum=[],joints=[],axes=[],points=[[0,0,0]];for(let i=0;i<6;i++){
+ joints.push(xyz4(cur));axes.push(matVec(r33(cur),SIX_AXES[i]));let ti=local6(q,i);locals.push(ti);cur=mm4(cur,ti);cum.push(cur);points.push(xyz4(cur));}
+ return {T:cur,R:r33(cur),p:xyz4(cur),locals,cum,joints,axes,points,q:q.slice()};
+}
+function rToEuler(R){let pitch=Math.asin(Math.max(-1,Math.min(1,-R[2][0]))),cp=Math.cos(pitch),yaw,roll;
+ if(Math.abs(cp)>1e-8){yaw=Math.atan2(R[1][0],R[0][0]);roll=Math.atan2(R[2][1],R[2][2]);}
+ else {yaw=Math.atan2(-R[0][1],R[1][1]);roll=0;}
+ return [yaw/DEG,pitch/DEG,roll/DEG];}
+function eulerToR(yaw,pitch,roll){return r33(mm4(mm4(rot4(2,yaw*DEG),rot4(1,pitch*DEG)),rot4(0,roll*DEG)))}
+function rToQuat(M){let a=M,trace=a[0][0]+a[1][1]+a[2][2],q;if(trace>0){let S=Math.sqrt(trace+1)*2;q=[.25*S,(a[2][1]-a[1][2])/S,(a[0][2]-a[2][0])/S,(a[1][0]-a[0][1])/S];}
+ else if(a[0][0]>a[1][1]&&a[0][0]>a[2][2]){let S=Math.sqrt(Math.max(.00000001,1+a[0][0]-a[1][1]-a[2][2]))*2;q=[(a[2][1]-a[1][2])/S,.25*S,(a[0][1]+a[1][0])/S,(a[0][2]+a[2][0])/S];}
+ else if(a[1][1]>a[2][2]){let S=Math.sqrt(Math.max(.00000001,1+a[1][1]-a[0][0]-a[2][2]))*2;q=[(a[0][2]-a[2][0])/S,(a[0][1]+a[1][0])/S,.25*S,(a[1][2]+a[2][1])/S];}
+ else {let S=Math.sqrt(Math.max(.00000001,1+a[2][2]-a[0][0]-a[1][1]))*2;q=[(a[1][0]-a[0][1])/S,(a[0][2]+a[2][0])/S,(a[1][2]+a[2][1])/S,.25*S];}
+ let n=vnorm(q);return q.map(x=>x/n)}
+function qMul(a,b){return [a[0]*b[0]-a[1]*b[1]-a[2]*b[2]-a[3]*b[3],a[0]*b[1]+a[1]*b[0]+a[2]*b[3]-a[3]*b[2],a[0]*b[2]-a[1]*b[3]+a[2]*b[0]+a[3]*b[1],a[0]*b[3]+a[1]*b[2]-a[2]*b[1]+a[3]*b[0]]}
+function orientError(Rc,Rt){let C=rToQuat(Rc),T=rToQuat(Rt);let E=qMul(T,[C[0],-C[1],-C[2],-C[3]]);if(E[0]<0)E=E.map(x=>-x);let vn=vnorm(E.slice(1));if(vn<1e-12)return [0,0,0];let ang=2*Math.atan2(vn,Math.max(0,E[0]));return E.slice(1).map(x=>x*ang/vn);}
+const sixPoseErr=(k,p,R)=>{let dp=vsub(p,k.p),dw=orientError(k.R,R);return {dp,dw,pr:vnorm(dp),ar:vnorm(dw),cost:vdot(dp,dp)+.45*.45*vdot(dw,dw)}};
+function solve6linear(A,b){let n=b.length,M=A.map((r,i)=>r.concat(b[i]));for(let col=0;col<n;col++){
+ let pivot=col;for(let r=col+1;r<n;r++)if(Math.abs(M[r][col])>Math.abs(M[pivot][col]))pivot=r;
+ if(Math.abs(M[pivot][col])<1e-13)return null;[M[col],M[pivot]]=[M[pivot],M[col]];
+ let den=M[col][col];for(let j=col;j<=n;j++)M[col][j]/=den;
+ for(let i=0;i<n;i++)if(i!==col){let f=M[i][col];for(let j=col;j<=n;j++)M[i][j]-=f*M[col][j]}
+ }return M.map(r=>r[n]);}
+function clampQ(q){return q.map((v,i)=>Math.min(SIX_LIMITS[i][1],Math.max(SIX_LIMITS[i][0],v)))}
+function solveFromSeed(targetP,targetR,seed){let q=clampQ(seed),damp=.07,best=null;
+ for(let k=0;k<125;k++){let state=kin6(q),err=sixPoseErr(state,targetP,targetR);if(!best||err.cost<best.err.cost)best={q:q.slice(),err,iter:k};
+ if(err.pr<.0015&&err.ar<.008)return {...best,converged:true};
+ let J=Array.from({length:6},()=>Array(6).fill(0)),weighted=[...err.dp,...err.dw.map(v=>v*.45)];
+ for(let j=0;j<6;j++){let ww=state.axes[j],vv=vcross(ww,vsub(state.p,state.joints[j]));for(let i=0;i<3;i++){J[i][j]=vv[i]*DEG;J[i+3][j]=ww[i]*.45*DEG;}}
+ let A=Array.from({length:6},()=>Array(6).fill(0)),b=Array(6).fill(0);
+ for(let i=0;i<6;i++){for(let row=0;row<6;row++)b[i]+=J[row][i]*weighted[row];for(let j=0;j<6;j++){for(let row=0;row<6;row++)A[i][j]+=J[row][i]*J[row][j];}A[i][i]+=damp*damp*.0003;}
+ let dq=solve6linear(A,b);if(!dq)break;let norm=Math.max(1,...dq.map(v=>Math.abs(v)/12));dq=dq.map(v=>v/norm);let better=false;
+ for(let alpha=1;alpha>=.03125;alpha/=2){let proposed=clampQ(q.map((v,i)=>v+alpha*dq[i]));let next=sixPoseErr(kin6(proposed),targetP,targetR);if(next.cost<err.cost-1e-12){q=proposed;better=true;damp=Math.max(.025,damp*.78);break;}}
+ if(!better){damp=Math.min(10,damp*2.2);if(damp>8)break;}
+ }
+ return {...best,converged:best.err.pr<.008&&best.err.ar<.035};}
+let fkTimer=null, fkTime=0,ikSolution=null,ikTargetQ=SIX_DEFAULT.slice(),ikHasTarget=false;
+const currentQ=()=>Array.from({length:6},(_,i)=>Number($('#fk-q'+(i+1)).value));
+function formatAngle(v){return fnum(v,1)+'°'}
+function orthoProj(viewDeg){let t=viewDeg*DEG,c=Math.cos(t),s=Math.sin(t),sc=235,ox=345,oy=327;
+ return (p)=>[ox+sc*(c*p[0]-s*p[1]),oy+sc*(.35*(s*p[0]+c*p[1])-.80*p[2])];}
+function drawArm6(svgId,q,viewDeg,goal=null){let k=kin6(q),project=orthoProj(viewDeg),h=shapeDef();
+ h+='<rect x="10" y="10" width="700" height="438" rx="12" fill="#f8fbff" stroke="#e1eaf4"/>';
+ for(let v=-.5;v<=1.5+.001;v+=.5){let A=project([v,-.8,0]),B=project([v,.8,0]);h+=line(...A,...B,'#e0e9f4',1.2);}
+ for(let v=-.8;v<=.8+.001;v+=.4){let A=project([-.5,v,0]),B=project([1.5,v,0]);h+=line(...A,...B,'#e0e9f4',1.2);}
+ let world=[[.38,0,0],[0,.38,0],[0,0,.38]],labels=['X₀','Y₀','Z₀'];let C=project([0,0,0]);world.forEach((p,i)=>{let pp=project(p);h+=arr(...C,...pp,'#9caec1',2,'s')+lg(pp[0]+8,pp[1]-8,labels[i],'#687c92',16);});
+ const shades=[colors.gray,colors.blue,colors.orange,colors.purple,colors.purple,colors.purple],pts=k.points;
+ pts.slice(1).forEach((p,i)=>{let A=project(pts[i]),B=project(p);h+=line(...A,...B,'#f5fbff',15)+line(...A,...B,shades[i],i===0?10:i<3?12:8,'stroke-linecap="round"');});
+ for(let i=0;i<6;i++){let p=project(k.joints[i]);h+=circ(...p,i===0?8:6,i===0?colors.gray:shades[Math.min(i,5)],'stroke="#ffffff" stroke-width="2"');
+ let shifts=[[10,24],[-13,-16],[9,20],[-32,-24],[13,24],[16,-18]][i];h+=lg(p[0]+shifts[0],p[1]+shifts[1],'J'+(i+1),colors.ink,13);
+ }
+ let tip=project(k.p);h+=circ(...tip,7,colors.green,'stroke="white" stroke-width="2"');
+ for(let i=0;i<3;i++){let v=k.R.map(row=>row[i]),q=project(vadd(k.p,v.map(x=>x*.22)));h+=arr(...tip,...q,[colors.blue,colors.green,colors.orange][i],3,['b','g','o'][i]);h+=lg(q[0]+5,q[1]-9,['Xₑ','Yₑ','Zₑ'][i],[colors.blue,colors.green,colors.orange][i],14);}
+ if(goal){let pt=project(goal.p);h+=line(...tip,...pt,colors.red,2.5,'stroke-dasharray="6 5"');h+=circ(...pt,9,colors.red,'stroke="white" stroke-width="2"');for(let i=0;i<3;i++){let v=goal.R.map(row=>row[i]),qq=project(vadd(goal.p,v.map(x=>x*.19)));h+=line(...pt,...qq,colors.red,2.2,'stroke-dasharray="5 3"');}h+=lg(pt[0]+11,pt[1]-14,'目标T*',colors.red,15);}
+ h+=lg(20,39,'六轴6R教学模型 · 投影图',colors.ink,20);
+ h+=lg(20,67,'J₁绕Z；J₂/J₃绕Y；J₄/J₆绕X；J₅绕Y',colors.gray,14);
+ h+=lg(20,421,`末端 (x,y,z) = (${fnum(k.p[0],3)}, ${fnum(k.p[1],3)}, ${fnum(k.p[2],3)}) m`,colors.ink,16);
+ h+=lg(20,443,'改变观察角度不会影响真实三维计算结果',colors.gray,12);
+ document.getElementById(svgId).innerHTML=h;return k;
+}
+function draw4Mat(id,T){drawMatrix(id,T.flat(),['cb','cg','co','cp'],4,3)}
+function renderFK(){let q=currentQ(),a=Number($('#fk-view').value),k=drawArm6('fk-svg',q,a);
+ q.forEach((v,i)=>set('fk-q'+(i+1)+'-v',v+'°'));set('fk-view-v',a+'°');set('fk-x',fnum(k.p[0]));set('fk-y',fnum(k.p[1]));set('fk-z',fnum(k.p[2]));
+ let e=rToEuler(k.R);set('fk-orient',`末端姿态（Z-Y-X 欧拉角，固定参考轴）：yaw=${formatAngle(e[0])}，pitch=${formatAngle(e[1])}，roll=${formatAngle(e[2])}`);
+ let idx=Number($('#fk-mat-joint').value)-1,kind=$('#fk-mat-kind').value,T=kind==='local'?k.locals[idx]:k.cum[idx];draw4Mat('fk-link-T',T);
+ $('#fk-mat-caption').innerHTML=kind==='local'?`正在查看 <sup>${idx}</sup>T<sub>${idx+1}</sub>：关节${idx+1}相对上一坐标系的局部变换。`:`正在查看 <sup>0</sup>T<sub>${idx+1}</sub>：前${idx+1}个变换连乘，当前坐标系相对于基座。`;
+ return k;}
+function stopFK(){if(fkTimer!==null){clearInterval(fkTimer);fkTimer=null;set('fk-play','▶ 六关节联动')}}
+Array.from({length:6},(_,i)=>$('#fk-q'+(i+1))).forEach(e=>e.addEventListener('input',renderFK));
+['fk-view','fk-mat-joint','fk-mat-kind'].forEach(id=>$('#'+id).addEventListener('input',renderFK));
+$('#fk-reset').addEventListener('click',()=>{stopFK();SIX_DEFAULT.forEach((v,i)=>$('#fk-q'+(i+1)).value=v);renderFK()});
+$('#fk-play').addEventListener('click',()=>{if(fkTimer!==null){stopFK();return;}fkTime=0;set('fk-play','Ⅱ 暂停联动');fkTimer=setInterval(()=>{fkTime+=.055;SIX_DEFAULT.forEach((v,i)=>$('#fk-q'+(i+1)).value=(v+Math.round(22*Math.sin(fkTime*(.8+i*.15)+i*.51))).toString());renderFK()},55)});
+function goalRead(){let p=['ik-tx','ik-ty','ik-tz'].map(id=>Number($('#'+id).value)),ypr=['ik-yaw','ik-pitch','ik-roll'].map(id=>Number($('#'+id).value));return {p,R:eulerToR(...ypr),ypr}}
+function readIKSliderLabels(){['ik-tx','ik-ty','ik-tz','ik-yaw','ik-pitch','ik-roll'].forEach((id,i)=>set(id+'-v',fnum(+$('#'+id).value,i<3?3:1)+(i<3?'':'°')))}
+function setGoalFromQ(q){let k=kin6(q),vals=k.p.concat(rToEuler(k.R));['ik-tx','ik-ty','ik-tz','ik-yaw','ik-pitch','ik-roll'].forEach((id,i)=>$('#'+id).value=vals[i]);ikTargetQ=q.slice();ikHasTarget=true;readIKSliderLabels();}
+function showIK(){let goal=goalRead(),q=ikSolution?ikSolution.q:SIX_DEFAULT,ang=Number($('#ik-view').value);drawArm6('ik-svg',q,ang,goal);set('ik-view-v',ang+'°')}
+function ikReset(preset){setGoalFromQ(preset);ikSolution=null;solveIK6();}
+function solveIK6(){let goal=goalRead(),seeds=[ikSolution?.q,ikTargetQ,currentQ(),SIX_DEFAULT,SIX_B,[0,-45,60,0,25,0],[-90,-30,90,50,-30,60]].filter(Boolean),best=null;
+ for(let seed of seeds){let r=solveFromSeed(goal.p,goal.R,seed);if(!best||r.err.cost<best.err.cost)best=r;if(best.converged&&best.err.pr<.0015&&best.err.ar<.008)break;}
+ ikSolution=best;let good=best.err.pr<.008&&best.err.ar<.035;
+ let pErr=(best.err.pr*1000).toFixed(1),oErr=(best.err.ar/DEG).toFixed(2);
+ set('ik-message',good?`✓ 找到满足给定位置与姿态精度的关节解：位置误差 ${pErr} mm，姿态误差 ${oErr}°。`:`当前数值迭代未找到满足精度的解；残余位置误差 ${pErr} mm，姿态误差 ${oErr}°。可能受可达性、关节限位或局部收敛影响。`);
+ $('#ik-message').style.background=good?'#e8f7f2':'#fff7ed';$('#ik-message').style.borderColor=good?'#ccece1':'#f2ddbd';
+ $('#ik-angles').innerHTML=best.q.map((v,i)=>`<div class="ang"><span>q${i+1}</span>${fnum(v,1)}°</div>`).join('');
+ let actual=kin6(best.q),actualE=rToEuler(actual.R),P=actual.p;
+ set('ik-verify',`代回FK得到末端坐标 (${fnum(P[0],3)}, ${fnum(P[1],3)}, ${fnum(P[2],3)}) m；末端欧拉角 yaw=${fnum(actualE[0],1)}°，pitch=${fnum(actualE[1],1)}°，roll=${fnum(actualE[2],1)}°。位置残差 ${pErr} mm，姿态残差 ${oErr}°。`);
+ showIK();}
+['ik-tx','ik-ty','ik-tz','ik-yaw','ik-pitch','ik-roll'].forEach(id=>$('#'+id).addEventListener('input',()=>{ikTargetQ=null;readIKSliderLabels();set('ik-message','目标位姿已调整。点击“求解目标位姿”更新六个关节角。');showIK()}));
+$('#ik-view').addEventListener('input',showIK);
+$('#ik-solve').addEventListener('click',solveIK6);
+$('#ik-reset').addEventListener('click',()=>ikReset(SIX_DEFAULT));
+$('#ik-example2').addEventListener('click',()=>ikReset(SIX_B));
+$('#ik-copy-fk').addEventListener('click',()=>ikReset(currentQ()));
+$('#ik-far').addEventListener('click',()=>{$('#ik-tx').value=1.5;$('#ik-ty').value=1.5;$('#ik-tz').value=1.5;readIKSliderLabels();ikTargetQ=null;solveIK6();});
+function renderIK(){setGoalFromQ(SIX_DEFAULT);solveIK6()}
+// navigation and startup
+const allCh=[...$$('section.chapter')],navLinks=[...$$('.toc a')];
+function updateActiveChapter(){
+let current=allCh[0];const refY=Math.min(250,window.innerHeight*.32);
+for(let ch of allCh){if(ch.getBoundingClientRect().top<=refY)current=ch;else break}
+navLinks.forEach(n=>n.classList.toggle('active',n.hash==='#'+current.id));
+}
+window.addEventListener('scroll',updateActiveChapter,{passive:true});
+window.addEventListener('hashchange',()=>requestAnimationFrame(updateActiveChapter));
+updateActiveChapter();
+renderDirection();renderWalk();renderRotation();renderRotation3D();v9Render();renderCoord();renderFK();renderIK();
+window.addEventListener('pagehide',stopFK);
+</script>
+</body>
+</html>
